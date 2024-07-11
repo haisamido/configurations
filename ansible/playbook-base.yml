@@ -1,0 +1,18 @@
+---
+- name: ansible-pull localhost playbook
+  hosts: localhost
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+  vars:
+    user: hido
+
+  pre_tasks:
+    - ansible.builtin.debug:
+        msg: "Tested on Ubuntu 23.10."
+
+  # Roles to execute
+  roles:
+    - { role: base, tags: base }
+#    - { role: development, tags: development }

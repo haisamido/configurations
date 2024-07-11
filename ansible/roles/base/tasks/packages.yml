@@ -1,0 +1,13 @@
+---
+- name: packages|Remove packages
+  ansible.builtin.apt:
+    name:
+      - "thunderbird*"
+    state: absent
+    purge: yes
+
+- name: packages|Install packages
+  ansible.builtin.apt:
+    name:
+      - tree
+    state: present

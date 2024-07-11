@@ -33,7 +33,7 @@ installs: ## pre-requisite installs
 	${PACKAGE_MANAGER} ansible git
 
 ansible_pull: installs ## ansible-pull
-	ansible-pull --url https://github.com/wdhowe/ansible-pull.git
+	ansible-pull --url https://github.com/haisamido/configurations.git
 
 help:
 	@printf "\033[37m%-30s\033[0m %s\n" "#----------------------------------------------------------------------------------"

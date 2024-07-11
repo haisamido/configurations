@@ -9,5 +9,8 @@
 - name: packages|Install packages
   ansible.builtin.apt:
     name:
+      - jq
       - tree
+      - yq
+      - xq
     state: present

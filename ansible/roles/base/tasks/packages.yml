@@ -10,6 +10,8 @@
   ansible.builtin.apt:
     name:
       - jq
+      - make
+      - podman
       - tree
       - yq
       - xq

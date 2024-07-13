@@ -6,9 +6,30 @@
     state: absent
     purge: yes
 
+- name: packages|Install python packages
+  ansible.builtin.apt:
+    name:
+      - python3-numpy
+      - python3-scipy
+      - python3-matplotlib
+      - python3-ipykernel
+      - python3-markdown
+      - python3-pyaudio
+      - python3-svgwrite
+      - python3-pip
+
+- name: packages|Install wave python package
+  ansible.builtin.pip:
+    name: 
+      - wave
+
 - name: packages|Install packages
   ansible.builtin.apt:
     name:
+      - snapd
+      - git
+      - awscli
+      - make
       - jq
       - make
       - podman
@@ -19,13 +40,28 @@
       - htop
       - gnuplot
       - octave
-      - postgresql
-      - postgresql-contrib
       - yq
 #      - xq
     state: present
 
-- name: packages|Install dbeaver-ce package
+- name: packages|Install snapd packages (sudo rm -f /etc/apt/preferences.d/nosnap.pref)
   ansible.builtin.apt:
     name:
+      - snapd
+      
+- name: packages|Install packages from snapd
+  command: sudo snap install k9s
+
+- name: packages|Install database packages and tools
+  ansible.builtin.apt:
+    name:
+      - postgresql
+      - postgresql-contrib
       - dbeaver-ce
+
+- name: packages|Install python packages via pip
+  ansible.builtin.pip:
+    name: 
+      - pgadmin4
+      - pyarrow
+      - ccsdspy

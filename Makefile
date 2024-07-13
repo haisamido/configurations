@@ -39,10 +39,13 @@ add_repositories: updates
 	sudo add-apt-repository -y ppa:serge-rider/dbeaver-ce
 	${MAKE} updates
 
-installs: | add_repositories ## pre-requisite installs
+installs: | install_snapd add_repositories ## pre-requisite installs
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash && \
 	ansible-playbook -vv ./ansible/playbook-base.yml 
+
+install_snapd:
+	sudo rm -f /etc/apt/preferences.d/nosnap.pref
 
 ansible_pull: installs ## ansible-pull
 	ansible-pull --url https://github.com/haisamido/configurations.git

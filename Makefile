@@ -45,6 +45,7 @@ installs: | install_snapd add_repositories ## pre-requisite installs
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash && \
 	curl -sS https://webi.sh/k9s | sh && \
+	sudo mkdir -p /var/{lib,log}/pgadmin; chown haisamido:haisamido /var/{lib,log}/pgadmin/
 	ansible-playbook -vv ./ansible/playbook-base.yml 
 
 install_snapd:

@@ -42,6 +42,13 @@
       - octave
       - yq
 #      - xq
+      - kubernetes
+      - arduino
+      - freecad
+      - stellarium
+      - gimp
+      - blender
+      - steam
     state: present
 
 - name: packages|Install snapd package (sudo rm -f /etc/apt/preferences.d/nosnap.pref)

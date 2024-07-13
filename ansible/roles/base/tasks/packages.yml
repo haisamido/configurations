@@ -13,6 +13,19 @@
       - make
       - podman
       - tree
-#      - yq
-      - xq
+      - qemu-system
+      - docker 
+      - tmux 
+      - htop
+      - gnuplot
+      - octave
+      - postgresql
+      - postgresql-contrib
+      - yq
+#      - xq
     state: present
+
+- name: packages|Install dbeaver-ce package
+  ansible.builtin.apt:
+    name:
+      - dbeaver-ce

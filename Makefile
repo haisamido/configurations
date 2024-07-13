@@ -6,6 +6,7 @@
 
 export SHELL=/bin/bash
 
+export CONTAINER_ENGINE=podman
 export TZ=":UTC"
 
 JQ=jq -r
@@ -14,7 +15,8 @@ GREP_HELP=grep -h -E
 SORT_EXEC=sort
 SED_EXEC=sed
 SUDO=sudo
-PACKAGE_MANAGER=${SUDO} apt install -y
+PACKAGE_INSTALLER=${SUDO} apt install -y
+PACKAGE_UPDATER=${SUDO} apt update
 PYTHON=$(shell which python3)
 PIP=pip
 
@@ -24,15 +26,24 @@ ifeq ($(UNAME), Darwin)
   GREP_HELP=fgrep -h -E
   SORT_EXEC=gsort 
   SED_EXEC=gsed
-  PACKAGE_MANAGER=brew install 
+  PACKAGE_INSTALLER=brew install 
 endif
 
 export MAKEFILE_LIST=Makefile
 
-installs: ## pre-requisite installs
-	${PACKAGE_MANAGER} ansible git podman qemu-system docker jq make podman tree tmux htop \
-	gnuplot octave
-		
+updates:
+	${PACKAGE_UPDATER}
+
+add_repositories: updates
+	sudo add-apt-repository -y ppa:rmescandon/yq
+	sudo add-apt-repository -y ppa:serge-rider/dbeaver-ce
+	${MAKE} updates
+
+installs: | add_repositories ## pre-requisite installs
+	${PACKAGE_INSTALLER} ansible git && \
+	curl -sSL https://bit.ly/install-xq | sudo bash && \
+	ansible-playbook -vv ./ansible/playbook-base.yml 
+
 ansible_pull: installs ## ansible-pull
 	ansible-pull --url https://github.com/haisamido/configurations.git
 
@@ -41,18 +52,18 @@ podman_config: installs ## podman_config: podman machine init && podman machine 
 	podman machine start || true
 
 postgres_install: | installs podman_config
-	podman run -p 5433:5432 --name pg_foobaar -e POSTGRES_PASSWORD=postgres -d docker.io/postgres
+	${CONTAINER_ENGINE} run -p 5433:5432 --name pg_foobaar -e POSTGRES_PASSWORD=postgres -d docker.io/postgres
 
-clean_podman_pod:
-	podman pod rm -f postgre-sql || true
+clean_container_pod:
+	${CONTAINER_ENGINE} pod rm -f postgre-sql || true
 
 clean:
-	${MAKE} clean_podman_pod
+	${MAKE} clean_container_pod
 
 test:
-	podman pod create --name postgre-sql -p 127.0.0.1:9876:80 -p 127.0.0.1:5432:5432
-	podman run --name postgresql --pod postgre-sql -d -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin docker.io/library/postgres
-	podman run --name pgadmin --pod postgre-sql -d -e 'PGADMIN_DEFAULT_EMAIL=admin@mail.com' -e 'PGADMIN_DEFAULT_PASSWORD=admin' docker.io/dpage/pgadmin4
+	${CONTAINER_ENGINE} pod create --name postgre-sql -p 127.0.0.1:9876:80 -p 127.0.0.1:5432:5432
+	${CONTAINER_ENGINE} run --name postgresql --pod postgre-sql -d -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin docker.io/library/postgres
+	${CONTAINER_ENGINE} run --name pgadmin --pod postgre-sql -d -e 'PGADMIN_DEFAULT_EMAIL=admin@mail.com' -e 'PGADMIN_DEFAULT_PASSWORD=admin' docker.io/dpage/pgadmin4
 
 help:
 	@printf "\033[37m%-30s\033[0m %s\n" "#----------------------------------------------------------------------------------"

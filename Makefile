@@ -30,12 +30,13 @@ endif
 export MAKEFILE_LIST=Makefile
 
 installs: ## pre-requisite installs
-	${PACKAGE_MANAGER} ansible git podman
-
+	${PACKAGE_MANAGER} ansible git podman qemu-system docker jq make podman tree tmux htop \
+	gnuplot octave
+		
 ansible_pull: installs ## ansible-pull
 	ansible-pull --url https://github.com/haisamido/configurations.git
 
-podman_config: ## podman_config: podman machine init && podman machine start
+podman_config: installs ## podman_config: podman machine init && podman machine start
 	podman machine init && \
 	podman machine start || true
 

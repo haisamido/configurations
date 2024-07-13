@@ -49,6 +49,10 @@
       - gimp
       - blender
       - steam
+      - steam-installer
+      - youtube-dl
+      - vlc
+      - scilab
     state: present
 
 - name: packages|Install snapd package (sudo rm -f /etc/apt/preferences.d/nosnap.pref)

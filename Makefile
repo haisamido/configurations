@@ -39,9 +39,12 @@ add_repositories: updates
 	sudo add-apt-repository -y ppa:serge-rider/dbeaver-ce
 	${MAKE} updates
 
+# source ~/.config/envman/PATH.env
+
 installs: | install_snapd add_repositories ## pre-requisite installs
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash && \
+	curl -sS https://webi.sh/k9s | sh && \
 	ansible-playbook -vv ./ansible/playbook-base.yml 
 
 install_snapd:

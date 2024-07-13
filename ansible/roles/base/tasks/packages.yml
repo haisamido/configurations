@@ -44,13 +44,10 @@
 #      - xq
     state: present
 
-- name: packages|Install snapd packages (sudo rm -f /etc/apt/preferences.d/nosnap.pref)
+- name: packages|Install snapd package (sudo rm -f /etc/apt/preferences.d/nosnap.pref)
   ansible.builtin.apt:
     name:
       - snapd
-      
-- name: packages|Install packages from snapd
-  command: sudo snap install k9s
 
 - name: packages|Install database packages and tools
   ansible.builtin.apt:

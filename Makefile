@@ -52,9 +52,7 @@ install_via_flatpak:
 		org.telegram.desktop \
 		io.github.shiftey.Desktop \
 		com.discordapp.Discord \
-		org.flightgear.FlightGear \
-		com.valvesoftware.Steam
-
+		org.flightgear.FlightGear
 
 installs: | install_snapd install_via_flatpak add_repositories ## pre-requisite installs
 	${PACKAGE_INSTALLER} ansible git && \

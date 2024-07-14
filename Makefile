@@ -41,7 +41,22 @@ add_repositories: updates
 
 # source ~/.config/envman/PATH.env
 
-installs: | install_snapd add_repositories ## pre-requisite installs
+install_ansible-galaxy_community.general:
+	ansible-galaxy collection install community.general
+
+install_via_flatpak:
+	flatpak install -y flathub \
+		us.zoom.Zoom \
+		com.slack.Slack \
+		com.google.Chrome \
+		org.telegram.desktop \
+		io.github.shiftey.Desktop \
+		com.discordapp.Discord \
+		org.flightgear.FlightGear \
+		com.valvesoftware.Steam
+
+
+installs: | install_snapd install_via_flatpak add_repositories ## pre-requisite installs
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash && \
 	curl -sS https://webi.sh/k9s | sh && \

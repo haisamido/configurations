@@ -23,16 +23,23 @@
     name: 
       - wave
 
+# https://www.reddit.com/r/podman/comments/14f6frv/podman_automatically_sets_cniversion_100_instead/?rdt=36925
+# /home/ewewe/.config/cni/net.d/deploy_internal.conflist file, and reset Podman using this command:
+# podman system reset --force
+
 - name: packages|Install packages
   ansible.builtin.apt:
     name:
       - snapd
+      - flatpak
+      - gnome-software-plugin-flatpak
       - git
       - awscli
       - make
       - jq
       - make
       - podman
+      - containernetworking-plugins
       - tree
       - qemu-system
       - docker 
@@ -41,7 +48,6 @@
       - gnuplot
       - octave
       - yq
-#      - xq
       - kubernetes
       - arduino
       - freecad
@@ -53,6 +59,10 @@
       - youtube-dl
       - vlc
       - scilab
+      - shotcut
+      - audacity
+      - inkscape
+      - lmms
     state: present
 
 - name: packages|Install snapd package (sudo rm -f /etc/apt/preferences.d/nosnap.pref)
@@ -73,3 +83,9 @@
       - pgadmin4
       - pyarrow
       - ccsdspy
+      - podman-compose
+
+# - name: packages|Install packages via flatpak
+#   community.general.flatpak:
+#     name:
+#       - us.zoom.Zoom

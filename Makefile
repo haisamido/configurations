@@ -46,13 +46,17 @@ install_ansible-galaxy_community.general:
 
 install_via_flatpak:
 	flatpak install -y flathub \
+    	io.podman_desktop.PodmanDesktop \
+		com.github.marhkb.Pods \
+		dev.skynomads.Seabird \
 		us.zoom.Zoom \
 		com.slack.Slack \
 		com.google.Chrome \
 		org.telegram.desktop \
 		io.github.shiftey.Desktop \
 		com.discordapp.Discord \
-		org.flightgear.FlightGear
+		org.flightgear.FlightGear \
+		fm.reaper.Reaper
 
 installs: | install_snapd install_via_flatpak add_repositories ## pre-requisite installs
 	${PACKAGE_INSTALLER} ansible git && \

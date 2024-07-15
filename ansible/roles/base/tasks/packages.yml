@@ -67,6 +67,7 @@
       - inkscape
       - lmms
       - handbrake
+      - speedtest-cli
     state: present
 
 - name: packages|Install snapd package (sudo rm -f /etc/apt/preferences.d/nosnap.pref)

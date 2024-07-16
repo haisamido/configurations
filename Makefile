@@ -71,11 +71,18 @@ install_kubernetes: install_preq
 	sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list   # helps tools such as command-not-found to work correctly
 	sudo apt-get update
 	sudo rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+	curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+	sudo install minikube-linux-amd64 /usr/local/bin/minikube
+	flatpak install -y io.kinvolk.Headlamp
 #	sudo apt install -y kubectl
 #	sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg # allow unprivileged APT programs to read this keyring
 #	kubectl version --client
 
-installs: | add_repositories updates upgrades install_preq install_snapd install_kubernetes install_via_flatpak ## pre-requisite installs
+install_iac:
+	sudo snap install --classic terraform
+	sudo snap install --classic terragrunt
+
+installs: | add_repositories updates upgrades install_preq install_snapd install_iac install_kubernetes install_via_flatpak ## pre-requisite installs
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash && \
 	curl -sS https://webi.sh/k9s | sh && \

@@ -35,6 +35,7 @@
     name:
       - snapd
       - flatpak
+      - kubectl
       - gnome-software-plugin-flatpak
       - git
       - awscli

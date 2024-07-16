@@ -17,6 +17,7 @@ SED_EXEC=sed
 SUDO=sudo
 PACKAGE_INSTALLER=${SUDO} apt install -y
 PACKAGE_UPDATER=${SUDO} apt update
+PACKAGE_UPGRADER=${SUDO} apt upgrade -y
 PYTHON=$(shell which python3)
 PIP=pip
 
@@ -34,10 +35,12 @@ export MAKEFILE_LIST=Makefile
 updates:
 	${PACKAGE_UPDATER}
 
+upgrades:
+	${PACKAGE_UPGRADER}
+
 add_repositories: updates
 	sudo add-apt-repository -y ppa:rmescandon/yq
 	sudo add-apt-repository -y ppa:serge-rider/dbeaver-ce
-	${MAKE} updates
 
 # source ~/.config/envman/PATH.env
 
@@ -58,7 +61,7 @@ install_via_flatpak:
 		org.flightgear.FlightGear \
 		fm.reaper.Reaper
 
-installs: | install_snapd install_via_flatpak add_repositories ## pre-requisite installs
+installs: | add_repositories updates upgrades install_snapd install_via_flatpak ## pre-requisite installs
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash && \
 	curl -sS https://webi.sh/k9s | sh && \

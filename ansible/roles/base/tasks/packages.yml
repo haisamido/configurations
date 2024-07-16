@@ -68,6 +68,7 @@
       - lmms
       - handbrake
       - speedtest-cli
+      - tuxguitar
     state: present
 
 - name: packages|Install snapd package (sudo rm -f /etc/apt/preferences.d/nosnap.pref)

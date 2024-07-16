@@ -61,11 +61,24 @@ install_via_flatpak:
 		org.flightgear.FlightGear \
 		fm.reaper.Reaper
 
-installs: | add_repositories updates upgrades install_snapd install_via_flatpak ## pre-requisite installs
+install_preq:
+	${PACKAGE_INSTALLER} apt-transport-https ca-certificates curl gnupg 
+
+# https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
+install_kubernetes: install_preq
+	curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+	echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+	sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list   # helps tools such as command-not-found to work correctly
+	sudo apt-get update
+	sudo rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+	sudo apt install -y kubectl
+	sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg # allow unprivileged APT programs to read this keyring
+	kubectl version --client
+
+installs: | add_repositories updates upgrades install_preq install_snapd install_kubernetes install_via_flatpak ## pre-requisite installs
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash && \
 	curl -sS https://webi.sh/k9s | sh && \
-	sudo mkdir -p /var/{lib,log}/pgadmin; chown haisamido:haisamido /var/{lib,log}/pgadmin/
 	ansible-playbook -vv ./ansible/playbook-base.yml 
 
 install_snapd:

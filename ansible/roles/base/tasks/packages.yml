@@ -20,6 +20,7 @@
       - python3-botocore
       - python3-pip
       - python3-octave-kernel
+      - python3-pytzdata
 
 - name: packages|Install wave python package
   ansible.builtin.pip:

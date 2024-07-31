@@ -47,6 +47,18 @@ add_repositories: updates
 install_ansible-galaxy_community.general:
 	ansible-galaxy collection install community.general
 
+install_vscode_prereq:
+	sudo apt-get install wget gpg
+	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+	sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+	echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+	rm -f packages.microsoft.gpg
+
+install_vscode: ## install vscode
+	sudo apt install -y apt-transport-https
+	sudo apt update
+	sudo apt install -y code
+
 install_via_flatpak:
 	flatpak install -y flathub \
     	io.podman_desktop.PodmanDesktop \
@@ -58,7 +70,6 @@ install_via_flatpak:
 		org.telegram.desktop \
 		io.github.shiftey.Desktop \
 		com.discordapp.Discord \
-		org.flightgear.FlightGear \
 		fm.reaper.Reaper
 
 install_preq:
@@ -74,22 +85,21 @@ install_kubernetes: install_preq
 	curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 	sudo install minikube-linux-amd64 /usr/local/bin/minikube
 	flatpak install -y io.kinvolk.Headlamp
-#	sudo apt install -y kubectl
-#	sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg # allow unprivileged APT programs to read this keyring
-#	kubectl version --client
+	curl -sS https://webi.sh/k9s
 
-install_iac:
+install_iac: install_snapd
 	sudo snap install --classic terraform
 	sudo snap install --classic terragrunt
+	sudo apt install -y ansible
 
-installs: | add_repositories updates upgrades install_preq install_snapd install_iac install_kubernetes install_via_flatpak ## pre-requisite installs
+install_all: | add_repositories updates upgrades install_preq install_snapd install_iac install_vscode install_kubernetes install_via_flatpak ## install all
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash && \
-	curl -sS https://webi.sh/k9s | sh && \
 	ansible-playbook -vv ./ansible/playbook-base.yml 
 
 install_snapd:
-	sudo rm -f /etc/apt/preferences.d/nosnap.pref
+	sudo rm -f /etc/apt/preferences.d/nosnap.pref && \
+	sudo apt install snapd
 
 ansible_pull: installs ## ansible-pull
 	ansible-pull --url https://github.com/haisamido/configurations.git

@@ -90,7 +90,6 @@ install_kubernetes: install_preq
 install_iac: install_snapd
 	sudo snap install --classic terraform
 	sudo snap install --classic terragrunt
-	sudo apt install -y ansible
 
 install_all: | add_repositories updates upgrades install_preq install_snapd install_iac install_vscode install_kubernetes install_via_flatpak ## install all
 	${PACKAGE_INSTALLER} ansible git && \
@@ -110,6 +109,11 @@ podman_config: installs ## podman_config: podman machine init && podman machine 
 
 postgres_install: | installs podman_config
 	${CONTAINER_ENGINE} run -p 5433:5432 --name pg_foobaar -e POSTGRES_PASSWORD=postgres -d docker.io/postgres
+
+git_setup: ## git setup
+	git config --global user.email "haisam.ido@gmail.com"
+	git config --global user.name "Haisam Ido"
+
 
 clean_container_pod:
 	${CONTAINER_ENGINE} pod rm -f postgre-sql || true

@@ -90,6 +90,7 @@ install_kubernetes: install_preq
 install_iac: install_snapd
 	sudo snap install --classic terraform
 	sudo snap install --classic terragrunt
+	curl -s https://fluxcd.io/install.sh | sudo bash
 
 install_all: | add_repositories updates upgrades install_preq install_snapd install_iac install_vscode install_kubernetes install_via_flatpak ## install all
 	${PACKAGE_INSTALLER} ansible git && \

@@ -97,6 +97,7 @@
       - pyarrow
       - ccsdspy
       - podman-compose
+      - mesa
 
 # - name: packages|Install packages via flatpak
 #   community.general.flatpak:

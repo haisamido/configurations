@@ -92,10 +92,13 @@ install_iac: install_snapd
 	sudo snap install --classic terragrunt
 	curl -s https://fluxcd.io/install.sh | sudo bash
 
+install_ansible: install_ansible-galaxy_community.general
+	${PACKAGE_INSTALLER} ansible
+	ansible-playbook -vv ./ansible/playbook-base.yml 
+
 install_all: | add_repositories updates upgrades install_preq install_snapd install_iac install_vscode install_kubernetes install_via_flatpak ## install all
 	${PACKAGE_INSTALLER} ansible git && \
-	curl -sSL https://bit.ly/install-xq | sudo bash && \
-	ansible-playbook -vv ./ansible/playbook-base.yml 
+	curl -sSL https://bit.ly/install-xq | sudo bash
 
 install_snapd:
 	sudo rm -f /etc/apt/preferences.d/nosnap.pref && \

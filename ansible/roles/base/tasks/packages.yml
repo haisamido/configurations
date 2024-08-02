@@ -97,7 +97,18 @@
       - pyarrow
       - ccsdspy
       - podman-compose
+
+- name: packages|Install agent-based modelling (ABM) packages via pip
+  ansible.builtin.pip:
+    name: 
       - mesa
+
+- name: packages|Install yamcs packages via pip
+  ansible.builtin.pip:
+    name: 
+      - yamcs-cli
+      - yamcs-client
+      - yamcs-pymdb
 
 # - name: packages|Install packages via flatpak
 #   community.general.flatpak:

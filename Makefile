@@ -34,6 +34,7 @@ export MAKEFILE_LIST=Makefile
 
 updates:
 	${PACKAGE_UPDATER}
+	flatpak update -y
 
 upgrades:
 	${PACKAGE_UPGRADER}

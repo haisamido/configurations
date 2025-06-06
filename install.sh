@@ -1,3 +1,32 @@
+
+sudo bash -c "
+  #softwareupdate -i -a
+  xcode-select --install
+  xcodebuild -license accept
+"
+# Installs or updates homebrew
+if [[ $(command -v brew) == "" ]]; then
+  echo "Installing Hombrew"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ${HOME}/.bash_profile
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+  echo "Updating Homebrew"
+  brew update
+fi
+# http://macappstore.org/
+
+# Installs cask which allows one to install mac os x native applications (below)
+brew install cask
+
+# Housecleaning
+brew update && brew cleanup
+
+# Upgrade applications if there are any
+#brew outdated | xargs brew upgrade
+brew upgrade 
+brew upgrade --cask
+
 brew install amazon-ecs-cli \
     ansible \
     aom \
@@ -16,7 +45,6 @@ brew install amazon-ecs-cli \
     curl \
     direnv \
     dive \
-    docker \
     docker-squash \
     docutils \
     dos2unix \
@@ -128,14 +156,14 @@ brew install amazon-ecs-cli \
     watch \
     wget \
     xq \
-    yq \
-    adobe-acrobat-reader \
+    yq
+
+brew install --cask adobe-acrobat-reader \
     android-platform-tools \
     audacity \
     blender \
     db-browser-for-sqlite \
     dbeaver-community \
-    docker \
     firefox \
     github \
     google-chrome \
@@ -155,5 +183,11 @@ brew install amazon-ecs-cli \
     virtualbox \
     visual-studio-code \
     vlc \
-    xquartz \
-    
+    xquartz
+
+brew install --cask docker
+
+# Python stuff
+#pip3 install --user bitstring uritools nose tornado boto3 lz4tools genson pypi matplotlib numpy py-gnuplot debugpy
+
+sudo scutil --set ComputerName foobar

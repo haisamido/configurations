@@ -190,4 +190,4 @@ brew install --cask docker
 # Python stuff
 #pip3 install --user bitstring uritools nose tornado boto3 lz4tools genson pypi matplotlib numpy py-gnuplot debugpy
 
-sudo scutil --set ComputerName foobar
+#sudo scutil --set ComputerName foobar

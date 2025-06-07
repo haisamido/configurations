@@ -78,6 +78,7 @@ brew install amazon-ecs-cli \
   gts \
   harfbuzz \
   hdf5 \
+  helm \
   htop \
   iftop \
   imagemagick \

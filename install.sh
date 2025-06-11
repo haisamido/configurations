@@ -129,12 +129,12 @@ brew install amazon-ecs-cli \
   podman \
   podman-compose \
   poppler \
-  postgresql@15 \
+  postgresql \
   pulumi \
   pyqt \
   pyqt@5 \
   python-matplotlib \
-  python@3.12 \
+  python3 \
   qemu \
   qscintilla2 \
   qt \
@@ -177,6 +177,7 @@ brew install --cask \
   mysqlworkbench \
   openscad \
   podman-desktop \
+  pgadmin4 \
   postgres-unofficial \
   processing \
   quarto \
@@ -196,4 +197,4 @@ brew install --cask \
 # Python stuff
 #pip3 install --user bitstring uritools nose tornado boto3 lz4tools genson pypi matplotlib numpy py-gnuplot debugpy
 #   guitar-pro \
-sudo scutil --set ComputerName ido-org
+#sudo scutil --set ComputerName foobar

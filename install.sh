@@ -85,6 +85,7 @@ brew install amazon-ecs-cli \
   iftop \
   imagemagick \
   javacc \
+  openjdk \
   jpeg-xl \
   jq \
   jupyter-r \
@@ -170,6 +171,7 @@ brew install --cask \
   db-browser-for-sqlite \
   dbeaver-community \
   docker \
+  eclipse-ide \
   firefox \
   github \
   google-chrome \

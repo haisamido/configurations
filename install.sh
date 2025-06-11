@@ -1,4 +1,5 @@
-
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+    
 sudo bash -c "
   #softwareupdate -i -a
   xcode-select --install

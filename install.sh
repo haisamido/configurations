@@ -3,6 +3,7 @@ sudo bash -c "
   #softwareupdate -i -a
   xcode-select --install
   xcodebuild -license accept
+  chsh -s /bin/bash
 "
 # Installs or updates homebrew
 if [[ $(command -v brew) == "" ]]; then
@@ -195,4 +196,4 @@ brew install --cask \
 # Python stuff
 #pip3 install --user bitstring uritools nose tornado boto3 lz4tools genson pypi matplotlib numpy py-gnuplot debugpy
 #   guitar-pro \
-#sudo scutil --set ComputerName foobar
+sudo scutil --set ComputerName ido-org

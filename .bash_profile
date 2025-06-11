@@ -3,10 +3,6 @@ if [ -f /etc/bashrc ]; then
   . /etc/bashrc
 fi
 
-#source /Users/hido/.dotfiles/.bashrc
-source ~/perl5/perlbrew/etc/bashrc
-#source ~/.profile
-
 parse_git_branch() {
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
@@ -42,18 +38,7 @@ alias ls='ls -GFh'
 alias pivssh='ssh -A -o PKCS11Provider=/usr/lib/ssh-keychain.dylib'
 alias clone='git clone --recurse-submodules -j8'
 
-
-export JAVA_HOME=/opt/homebrew/opt/openjdk\@21/libexec/openjdk.jdk/Contents/Home
-
-#eval "$(direnv hook bash)"
-
-getent() {
-  [ "$1" == "hosts" ] && shift
-  for x
-  do
-    echo $x $(dscacheutil -q host -a name $x | awk '/^ip_address/{print $NF}')
-  done
-}
+export JAVA_HOME=/opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"

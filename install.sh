@@ -176,7 +176,6 @@ brew install --cask \
   github \
   google-chrome \
   headlamp \
-  jedit \
   lmms \
   mysqlworkbench \
   openscad \
@@ -197,6 +196,11 @@ brew install --cask \
   visual-studio-code \
   vlc \
   xquartz
+
+if ! test -e "${HOME}/.bash_profile"; then
+  curl https://raw.githubusercontent.com/haisamido/configurations/refs/heads/main/.bash_profile > ${HOME}/.bash_profile
+  ln -sf ${HOME}/.bash_profile ${HOME}/.bashrc
+fi
 
 # Python stuff
 #pip3 install --user bitstring uritools nose tornado boto3 lz4tools genson pypi matplotlib numpy py-gnuplot debugpy

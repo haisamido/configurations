@@ -2,6 +2,7 @@ defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
     
 sudo bash -c "
   #softwareupdate -i -a
+  softwareupdate --install-rosetta
   xcode-select --install
   xcodebuild -license accept
   chsh -s /bin/bash

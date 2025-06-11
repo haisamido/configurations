@@ -115,7 +115,7 @@ brew install amazon-ecs-cli \
   netcat \
   netpbm \
   nmap \
-  node@20 \
+  node \
   nvm \
   octave \
   open-mpi \
@@ -176,6 +176,7 @@ brew install --cask \
   github \
   google-chrome \
   headlamp \
+  jedit \
   lmms \
   mysqlworkbench \
   openscad \

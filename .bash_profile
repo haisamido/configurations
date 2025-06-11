@@ -15,15 +15,6 @@ complete -W "\`grep -oP '^[a-zA-Z0-9_.%\-]+:([^=]|$)' ?akefile | sed 's/[^a-zA-Z
 
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
-export TAAS_PATH=${HOME}/development/SSMO/SSMO-DAT
-export SSMO_MISC_PATH=${HOME}/development/SSMO/SSMO-Misc
-export SC_PATH=${HOME}/development/SSMO/Spacecraft
-export SPACECRAFT_PATH=$SC_PATH
-export DASH_PATH=${HOME}/development/SSMO/SSMO-Dash
-
-export ENVIRO=dev
-export CONTEXT=development
-
 export HISTSIZE=
 export HISTFILESIZE=
 

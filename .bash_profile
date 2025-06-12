@@ -20,7 +20,7 @@ my_ip=$(ifconfig|grep 'inet '|grep -v '127.0.0.1'| head -1|awk '{print $2}')
 GNU_INSTALL=/opt/homebrew/bin
 GO_INSTALL=${HOME}/go/bin
 
-export PATH=/usr/local/bin:${GO_INSTALL}:$GNU_INSTALL:$PATH
+export PATH=${HOME}/.local/bin/:usr/local/bin:${GO_INSTALL}:$GNU_INSTALL:$PATH
 
 eval "$($GNU_INSTALL/brew shellenv)"
 

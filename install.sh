@@ -2,10 +2,14 @@ defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 
 if ! test -e "${HOME}/.bash_profile"; then
   curl https://raw.githubusercontent.com/haisamido/configurations/refs/heads/main/.bash_profile > ${HOME}/.bash_profile
+  if test -e "${HOME}/.bashrc"; then
+    mv ${HOME}/.bashrc ${HOME}/.bashrc.orig
+  fi
   ln -sf ${HOME}/.bash_profile ${HOME}/.bashrc
 fi
 
 mkdir -p ${HOME}/development/github.com/
+mkdir -p ${HOME}/.ssh && chmod 700 ${HOME}/.ssh
 
 sudo bash -c "
   #softwareupdate -i -a

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 
 if ! test -e "${HOME}/.bash_profile"; then
@@ -187,6 +189,7 @@ brew install --cask \
   firefox \
   github \
   google-chrome \
+  google-driv \
   headlamp \
   lmms \
   mysqlworkbench \

@@ -57,6 +57,7 @@ brew install amazon-ecs-cli \
   colordiff \
   coreutils \
   couchdb \
+  container-diff \
   cspice \
   curl \
   direnv \

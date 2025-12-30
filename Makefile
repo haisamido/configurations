@@ -87,6 +87,8 @@ install_via_snap: install_snapd ## install packages via snap
 	sudo snap install --classic k9s
 	sudo snap install --classic kubectl
 	sudo snap install --classic yq
+	sudo snap install --classic helm
+	sudo snap install --classic freecad
 	curl -s https://fluxcd.io/install.sh | sudo bash
 
 install_via_ansible: ## install ansible and run playbook

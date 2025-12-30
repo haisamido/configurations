@@ -52,6 +52,12 @@
       - zip
       - tar
       - make
+      - docker.io
+      - docker-compose
+      - nmap
+      - net-tools
+      - wireshark
+      - iotop
       - podman
       - podman-compose
       - containernetworking-plugins

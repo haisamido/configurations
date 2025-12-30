@@ -22,34 +22,43 @@
       - python3-octave-kernel
       - python3-pytzdata
 
-- name: packages|Install wave python package
-  ansible.builtin.pip:
-    name: 
-      - wave
+# - name: packages|Install wave python package
+#   ansible.builtin.pip:
+#     name: 
+#       - wave
 
 # https://www.reddit.com/r/podman/comments/14f6frv/podman_automatically_sets_cniversion_100_instead/?rdt=36925
 # /home/ewewe/.config/cni/net.d/deploy_internal.conflist file, and reset Podman using this command:
 # podman system reset --force
+# curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 
 - name: packages|Install packages
   ansible.builtin.apt:
     name:
       - wget
+      - curl
+      - build-essential
+      - bash-completion
       - gpg
       - snapd
       - flatpak
-      - kubectl
+      # - kubectl
       - gnome-software-plugin-flatpak
       - git
-      - awscli
+      # - awscli
       - make
       - jq
+      - yq
+      - unzip
+      - zip
+      - tar
       - make
       - podman
-      - containernetworking-plugins
+      - podman-compose
+      # - containernetworking-plugins
       - tree
-      - qemu-system
-      - docker 
+#      - qemu-system
+      # - docker 
       - tmux 
       - htop
       - gnuplot
@@ -57,31 +66,29 @@
       - yq
       - kubernetes
       - arduino
-      - freecad
+      # - freecad
       - stellarium
       - gimp
       - blender
-      - steam
-      - steam-installer
-      - youtube-dl
+      # - steam
+#      - steam-installer
+      # - youtube-dl
       - vlc
       - scilab
       - shotcut
       - audacity
       - inkscape
-      - lmms
-      - handbrake
+#      - handbrake
       - speedtest-cli
-      - tuxguitar
       - iftop
       - vim
-      - nodejs
+      - snapd
     state: present
 
-- name: packages|Install snapd package (sudo rm -f /etc/apt/preferences.d/nosnap.pref)
-  ansible.builtin.apt:
-    name:
-      - snapd
+# - name: packages|Install snapd package (sudo rm -f /etc/apt/preferences.d/nosnap.pref)
+#   ansible.builtin.apt:
+#     name:
+#       - snapd
 
 - name: packages|Install database packages and tools
   ansible.builtin.apt:
@@ -90,27 +97,35 @@
       - postgresql-contrib
       - dbeaver-ce
 
-- name: packages|Install python packages via pip
-  ansible.builtin.pip:
-    name: 
-      - pgadmin4
-      - pyarrow
-      - ccsdspy
-      - podman-compose
+# - name: packages|Install python packages via pip
+#   ansible.builtin.pip:
+#     name: 
+#       - pgadmin4
+#       - pyarrow
+#       - ccsdspy
+#       - podman-compose
 
-- name: packages|Install agent-based modelling (ABM) packages via pip
-  ansible.builtin.pip:
-    name: 
-      - mesa
+# - name: packages|Install agent-based modelling (ABM) packages via pip
+#   ansible.builtin.pip:
+#     name: 
+#       - mesa
 
-- name: packages|Install yamcs packages via pip
-  ansible.builtin.pip:
-    name: 
-      - yamcs-cli
-      - yamcs-client
-      - yamcs-pymdb
+# - name: packages|Install yamcs packages via pip
+#   ansible.builtin.pip:
+#     name: 
+#       - yamcs-cli
+#       - yamcs-client
+#       - yamcs-pymdb
 
-# - name: packages|Install packages via flatpak
-#   community.general.flatpak:
-#     name:
-#       - us.zoom.Zoom
+- name: packages|Install packages via flatpak
+  community.general.flatpak:
+    name:
+      - us.zoom.Zoom
+      - com.slack.Slack
+      - io.podman_desktop.PodmanDesktop
+      - dev.skynomads.Seabird
+      - com.google.Chrome
+      - org.telegram.desktop
+      - io.github.shiftey.Desktop
+      - com.discordapp.Discord
+      - fm.reaper.Reaper

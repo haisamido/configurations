@@ -42,6 +42,7 @@ upgrades:
 add_repositories: updates
 	sudo add-apt-repository -y ppa:rmescandon/yq
 	sudo add-apt-repository -y ppa:serge-rider/dbeaver-ce
+	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 # source ~/.config/envman/PATH.env
 
@@ -60,44 +61,57 @@ install_vscode: ## install vscode
 	sudo apt update
 	sudo apt install -y code
 
-install_via_flatpak:
-	flatpak install -y flathub \
-    	io.podman_desktop.PodmanDesktop \
-		com.github.marhkb.Pods \
-		dev.skynomads.Seabird \
-		us.zoom.Zoom \
-		com.slack.Slack \
-		com.google.Chrome \
-		org.telegram.desktop \
-		io.github.shiftey.Desktop \
-		com.discordapp.Discord \
-		fm.reaper.Reaper
+# install_via_flatpak: ## install via flatpak
+# 	flatpak install -y flathub \
+#     	io.podman_desktop.PodmanDesktop \
+# 		com.github.marhkb.Pods \
+# 		dev.skynomads.Seabird \
+# 		us.zoom.Zoom \
+# 		com.slack.Slack \
+# 		com.google.Chrome \
+# 		org.telegram.desktop \
+# 		io.github.shiftey.Desktop \
+# 		com.discordapp.Discord \
+# 		fm.reaper.Reaper
 
-install_preq:
+install_preq: add_repositories updates upgrades ## install prequisites
 	${PACKAGE_INSTALLER} apt-transport-https ca-certificates curl gnupg 
 
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
-install_kubernetes: install_preq
-	curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-	echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-	sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list   # helps tools such as command-not-found to work correctly
-	sudo apt-get update
-	sudo rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-	curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-	sudo install minikube-linux-amd64 /usr/local/bin/minikube
-	flatpak install -y io.kinvolk.Headlamp
-	curl -sS https://webi.sh/k9s
 
-install_iac: install_snapd
+install_kubectl: install_preq ## install kubectl
+	sudo snap install kubectl --classic
+# 	curl -LO "https://dl.k8s.io/release/$$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+# 	sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+# 	rm -f kubectl
+
+install_taskfile: install_preq ## install taskfile
+	sudo sh -c "$$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+
+# install_kubernetes: install_preq
+# 	curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+# 	echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+# 	sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list   # helps tools such as command-not-found to work correctly
+# 	sudo apt-get update
+# 	sudo rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+# 	curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+# 	sudo install minikube-linux-amd64 /usr/local/bin/minikube
+# 	flatpak install -y io.kinvolk.Headlamp
+# 	curl -sS https://webi.sh/k9s
+
+install_snap_pkg: install_snapd
 	sudo snap install --classic terraform
 	sudo snap install --classic terragrunt
+	sudo snap install --classic aws-cli
+	sudo snap install --classic k9s
+	sudo snap install --classic kubectl
 	curl -s https://fluxcd.io/install.sh | sudo bash
 
 install_ansible: install_ansible-galaxy_community.general
 	${PACKAGE_INSTALLER} ansible
 	ansible-playbook -vv ./ansible/playbook-base.yml 
 
-install_all: | add_repositories updates upgrades install_preq install_snapd install_iac install_vscode install_kubernetes install_via_flatpak ## install all
+install_all: | add_repositories updates upgrades install_preq install_kubectl install_taskfile install_ansible install_snapd install_snap_pkg ## install all
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash
 
@@ -118,7 +132,6 @@ postgres_install: | installs podman_config
 git_setup: ## git setup
 	git config --global user.email "haisam.ido@gmail.com"
 	git config --global user.name "Haisam Ido"
-
 
 clean_container_pod:
 	${CONTAINER_ENGINE} pod rm -f postgre-sql || true

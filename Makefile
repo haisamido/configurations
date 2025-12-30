@@ -40,9 +40,8 @@ upgrades:
 	${PACKAGE_UPGRADER}
 
 add_repositories: updates
-#	sudo add-apt-repository -y ppa:rmescandon/yq
-#	sudo add-apt-repository --remove ppa:rmescandon/yq
 	sudo add-apt-repository -y ppa:serge-rider/dbeaver-ce
+	sudo curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 	$(MAKE) updates
 
@@ -61,13 +60,16 @@ install_vscode: ## install vscode
 install_preq: add_repositories updates upgrades ## install prequisites
 	${PACKAGE_INSTALLER} apt-transport-https ca-certificates curl gnupg
 
+config_post: ## configure post installation
+	sudo usermod -aG docker gitlab-runner
+	sudo usermod -aG docker $${USER}
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
 
-install_kubectl: install_preq ## install kubectl
-	sudo snap install kubectl --classic
-
-install_taskfile: install_preq ## install taskfile
+install_via_curl: install_preq ## install via curl
 	sudo sh -c "$$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+	sudo curl -sfL https://get.k3s.io | sh -
+	sudo curl -s https://fluxcd.io/install.sh | sudo bash
+	sudo curl -sSL https://bit.ly/install-xq | sudo bash
 
 # install_kubernetes: install_preq
 # 	curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
@@ -89,16 +91,14 @@ install_via_snap: install_snapd ## install packages via snap
 	sudo snap install --classic yq
 	sudo snap install --classic helm
 	sudo snap install --classic freecad
-	curl -s https://fluxcd.io/install.sh | sudo bash
 
 install_via_ansible: ## install ansible and run playbook
 	${PACKAGE_INSTALLER} ansible
 	ansible-galaxy collection install community.general
 	ansible-playbook -vv ./ansible/playbook-base.yml 
 
-install_all: | add_repositories updates upgrades install_preq install_taskfile install_via_ansible install_via_snap ## install all
-	${PACKAGE_INSTALLER} ansible git && \
-	curl -sSL https://bit.ly/install-xq | sudo bash
+install_all: | add_repositories install_preq install_via_curl install_via_ansible install_via_snap ## install all
+	$(MAKE) config_post
 
 install_snapd:
 	sudo rm -f /etc/apt/preferences.d/nosnap.pref && \

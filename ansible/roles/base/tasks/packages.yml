@@ -44,8 +44,11 @@
       - gpg
       - snapd
       - flatpak
+      - openjdk-17-jdk
+      - maven
       - gnome-software-plugin-flatpak
       - git
+      - gitlab-runner
       - make
       - jq
       - unzip
@@ -70,12 +73,9 @@
       - yq
       - kubernetes
       - arduino
-      # - freecad
       - stellarium
       - gimp
       - blender
-      # - steam
-#      - steam-installer
       # - youtube-dl
       - vlc
       - scilab
@@ -88,11 +88,6 @@
       - snapd
       - golang-go
     state: present
-
-# - name: packages|Install snapd package (sudo rm -f /etc/apt/preferences.d/nosnap.pref)
-#   ansible.builtin.apt:
-#     name:
-#       - snapd
 
 - name: packages|Install database packages and tools
   ansible.builtin.apt:

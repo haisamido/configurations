@@ -112,9 +112,6 @@ podman_config: ## podman_config: podman machine init && podman machine start
 	podman machine init && \
 	podman machine start || true
 
-postgres_install: | installs podman_config
-	${CONTAINER_ENGINE} run -p 5433:5432 --name pg_foobaar -e POSTGRES_PASSWORD=postgres -d docker.io/postgres
-
 git_setup: ## git setup
 	git config --global user.email "haisam.ido@gmail.com"
 	git config --global user.name "Haisam Ido"

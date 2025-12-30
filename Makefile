@@ -91,6 +91,7 @@ install_via_snap: install_snapd ## install packages via snap
 	sudo snap install --classic yq
 	sudo snap install --classic helm
 	sudo snap install --classic freecad
+	sudo snap install --classic savedesktop
 
 install_via_ansible: ## install ansible and run playbook
 	${PACKAGE_INSTALLER} ansible

@@ -10,7 +10,7 @@
 
   pre_tasks:
     - ansible.builtin.debug:
-        msg: "Tested on Ubuntu 23.10."
+        msg: "Tested on Ubuntu 24.04."
 
   # Roles to execute
   roles:

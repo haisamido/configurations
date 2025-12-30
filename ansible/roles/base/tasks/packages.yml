@@ -21,6 +21,8 @@
       - python3-pip
       - python3-octave-kernel
       - python3-pytzdata
+      - python3-yaml
+    state: present
 
 # - name: packages|Install wave python package
 #   ansible.builtin.pip:
@@ -42,23 +44,19 @@
       - gpg
       - snapd
       - flatpak
-      # - kubectl
       - gnome-software-plugin-flatpak
       - git
-      # - awscli
       - make
       - jq
-      - yq
       - unzip
       - zip
       - tar
       - make
       - podman
       - podman-compose
-      # - containernetworking-plugins
+      - containernetworking-plugins
       - tree
-#      - qemu-system
-      # - docker 
+      - qemu-system
       - tmux 
       - htop
       - gnuplot
@@ -78,7 +76,6 @@
       - shotcut
       - audacity
       - inkscape
-#      - handbrake
       - speedtest-cli
       - iftop
       - vim

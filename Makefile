@@ -40,14 +40,11 @@ upgrades:
 	${PACKAGE_UPGRADER}
 
 add_repositories: updates
-	sudo add-apt-repository -y ppa:rmescandon/yq
+#	sudo add-apt-repository -y ppa:rmescandon/yq
+#	sudo add-apt-repository --remove ppa:rmescandon/yq
 	sudo add-apt-repository -y ppa:serge-rider/dbeaver-ce
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-
-# source ~/.config/envman/PATH.env
-
-install_ansible-galaxy_community.general:
-	ansible-galaxy collection install community.general
+	$(MAKE) updates
 
 install_vscode_prereq:
 	sudo apt-get install wget gpg
@@ -61,29 +58,13 @@ install_vscode: ## install vscode
 	sudo apt update
 	sudo apt install -y code
 
-# install_via_flatpak: ## install via flatpak
-# 	flatpak install -y flathub \
-#     	io.podman_desktop.PodmanDesktop \
-# 		com.github.marhkb.Pods \
-# 		dev.skynomads.Seabird \
-# 		us.zoom.Zoom \
-# 		com.slack.Slack \
-# 		com.google.Chrome \
-# 		org.telegram.desktop \
-# 		io.github.shiftey.Desktop \
-# 		com.discordapp.Discord \
-# 		fm.reaper.Reaper
-
 install_preq: add_repositories updates upgrades ## install prequisites
-	${PACKAGE_INSTALLER} apt-transport-https ca-certificates curl gnupg 
+	${PACKAGE_INSTALLER} apt-transport-https ca-certificates curl gnupg
 
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
 
 install_kubectl: install_preq ## install kubectl
 	sudo snap install kubectl --classic
-# 	curl -LO "https://dl.k8s.io/release/$$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-# 	sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-# 	rm -f kubectl
 
 install_taskfile: install_preq ## install taskfile
 	sudo sh -c "$$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
@@ -99,19 +80,21 @@ install_taskfile: install_preq ## install taskfile
 # 	flatpak install -y io.kinvolk.Headlamp
 # 	curl -sS https://webi.sh/k9s
 
-install_snap_pkg: install_snapd
+install_via_snap: install_snapd ## install packages via snap
 	sudo snap install --classic terraform
 	sudo snap install --classic terragrunt
 	sudo snap install --classic aws-cli
 	sudo snap install --classic k9s
 	sudo snap install --classic kubectl
+	sudo snap install --classic yq
 	curl -s https://fluxcd.io/install.sh | sudo bash
 
-install_ansible: install_ansible-galaxy_community.general
+install_via_ansible: ## install ansible and run playbook
 	${PACKAGE_INSTALLER} ansible
+	ansible-galaxy collection install community.general
 	ansible-playbook -vv ./ansible/playbook-base.yml 
 
-install_all: | add_repositories updates upgrades install_preq install_kubectl install_taskfile install_ansible install_snapd install_snap_pkg ## install all
+install_all: | add_repositories updates upgrades install_preq install_taskfile install_via_ansible install_via_snap ## install all
 	${PACKAGE_INSTALLER} ansible git && \
 	curl -sSL https://bit.ly/install-xq | sudo bash
 
@@ -122,7 +105,7 @@ install_snapd:
 ansible_pull: installs ## ansible-pull
 	ansible-pull --url https://github.com/haisamido/configurations.git
 
-podman_config: installs ## podman_config: podman machine init && podman machine start
+podman_config: ## podman_config: podman machine init && podman machine start
 	podman machine init && \
 	podman machine start || true
 

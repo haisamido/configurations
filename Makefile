@@ -81,7 +81,7 @@ install_taskfile: install_preq ## install taskfile
 # 	curl -sS https://webi.sh/k9s
 
 install_via_snap: install_snapd ## install packages via snap
-	sudo snap install --classic terraform
+	sudo snap install --classic terraform && terraform -install-autocomplete
 	sudo snap install --classic terragrunt
 	sudo snap install --classic aws-cli
 	sudo snap install --classic k9s

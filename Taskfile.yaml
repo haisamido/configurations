@@ -1,0 +1,205 @@
+version: '3'
+
+vars:
+  CONTAINER_ENGINE: podman
+  TZ: ":UTC"
+  JQ: jq -r
+  DATE_EXEC:
+    sh: |
+      if [[ "$(uname)" == "Darwin" ]]; then
+        echo "gdate"
+      else
+        echo "date"
+      fi
+  GREP_HELP:
+    sh: |
+      if [[ "$(uname)" == "Darwin" ]]; then
+        echo "fgrep -h -E"
+      else
+        echo "grep -h -E"
+      fi
+  SORT_EXEC:
+    sh: |
+      if [[ "$(uname)" == "Darwin" ]]; then
+        echo "gsort"
+      else
+        echo "sort"
+      fi
+  SED_EXEC:
+    sh: |
+      if [[ "$(uname)" == "Darwin" ]]; then
+        echo "gsed"
+      else
+        echo "sed"
+      fi
+  SUDO: sudo
+  PACKAGE_INSTALLER:
+    sh: |
+      if [[ "$(uname)" == "Darwin" ]]; then
+        echo "brew install"
+      else
+        echo "sudo apt install -y"
+      fi
+  PACKAGE_UPDATER:
+    sh: |
+      if [[ "$(uname)" == "Darwin" ]]; then
+        echo "brew update"
+      else
+        echo "sudo apt update"
+      fi
+  PACKAGE_UPGRADER:
+    sh: |
+      if [[ "$(uname)" == "Darwin" ]]; then
+        echo "brew upgrade"
+      else
+        echo "sudo apt upgrade -y"
+      fi
+  PYTHON:
+    sh: which python3
+  PIP: pip
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list-all
+    silent: true
+
+  updates:
+    desc: Update package lists
+    cmds:
+      - "{{.PACKAGE_UPDATER}}"
+      - flatpak update -y
+
+  upgrades:
+    desc: Upgrade installed packages
+    cmds:
+      - "{{.PACKAGE_UPGRADER}}"
+
+  prep_docker:
+    desc: Prepare docker repository
+    cmds:
+      - sudo install -m 0755 -d /etc/apt/keyrings
+      - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
+      - sudo chmod a+r /etc/apt/keyrings/docker.gpg
+      - |
+        echo \
+          "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+          "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+  add_repositories:
+    desc: Add required software repositories
+    cmds:
+      - task: updates
+      - sudo add-apt-repository -y ppa:serge-rider/dbeaver-ce || true
+      - sudo curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash || true
+      - flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || true
+      - task: prep_docker
+      - task: updates
+
+  install_vscode_prereq:
+    desc: Install VSCode prerequisites
+    cmds:
+      - sudo apt-get install wget gpg
+      - wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+      - sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+      - echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+      - rm -f packages.microsoft.gpg
+
+  install_vscode:
+    desc: Install VSCode
+    cmds:
+      - sudo apt install -y apt-transport-https
+      - sudo apt update
+      - sudo apt install -y code
+
+  install_preq:
+    desc: Install prerequisites
+    cmds:
+      - task: add_repositories
+      - task: upgrades
+      - "{{.PACKAGE_INSTALLER}} apt-transport-https ca-certificates curl gnupg"
+
+  config_post:
+    desc: Configure post installation
+    cmds:
+      - sudo usermod -aG docker gitlab-runner
+      - sudo usermod -aG docker $USER
+
+  install_via_curl:
+    desc: Install packages via curl
+    cmds:
+      - sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+      - sudo curl -sfL https://get.k3s.io | sh -
+      - sudo curl -s https://fluxcd.io/install.sh | sudo bash
+      - sudo curl -sSL https://bit.ly/install-xq | sudo bash
+
+  install_snapd:
+    desc: Install snapd
+    cmds:
+      - sudo rm -f /etc/apt/preferences.d/nosnap.pref || true
+      - sudo apt install snapd -y || true
+
+  install_via_snap:
+    desc: Install packages via snap
+    cmds:
+      - task: install_snapd
+      - sudo snap install --classic terraform && terraform -install-autocomplete || true
+      - sudo snap install --classic terragrunt || true
+      - sudo snap install --classic aws-cli || true
+      - sudo snap install --classic k9s || true
+      - sudo snap install --classic kubectl || true
+      - sudo snap install --classic yq || true
+      - sudo snap install --classic helm || true
+      - sudo snap install --classic freecad || true
+      - sudo snap install --classic savedesktop || true
+
+  install_via_ansible:
+    desc: Install ansible and run playbook
+    cmds:
+      - "{{.PACKAGE_INSTALLER}} ansible || true"
+      - ansible-galaxy collection install community.general || true
+      - ansible-playbook -vv ./ansible/playbook-base.yml
+
+  install_all:
+    desc: Install all packages and configurations
+    cmds:
+      - task: install_preq
+      - task: install_via_curl
+      - task: install_via_ansible
+      - task: install_via_snap
+      - task: config_post
+
+  ansible_pull:
+    desc: Run ansible-pull from GitHub repository
+    cmds:
+      - ansible-pull --url https://github.com/haisamido/configurations.git
+
+  podman_config:
+    desc: Configure podman machine (init and start)
+    cmds:
+      - podman machine init && podman machine start || true
+
+  git_setup:
+    desc: Setup git configuration
+    cmds:
+      - git config --global user.email "haisam.ido@gmail.com"
+      - git config --global user.name "Haisam Ido"
+
+  clean_container_pod:
+    desc: Clean up PostgreSQL container pod
+    cmds:
+      - "{{.CONTAINER_ENGINE}} pod rm -f postgre-sql || true"
+
+  clean:
+    desc: Clean up resources
+    cmds:
+      - task: clean_container_pod
+
+  test:
+    desc: Test PostgreSQL and pgAdmin setup
+    cmds:
+      - "{{.CONTAINER_ENGINE}} pod create --name postgre-sql -p 127.0.0.1:9876:80 -p 127.0.0.1:5432:5432"
+      - "{{.CONTAINER_ENGINE}} run --name postgresql --pod postgre-sql -d -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin docker.io/library/postgres"
+      - "{{.CONTAINER_ENGINE}} run --name pgadmin --pod postgre-sql -d -e 'PGADMIN_DEFAULT_EMAIL=admin@mail.com' -e 'PGADMIN_DEFAULT_PASSWORD=admin' docker.io/dpage/pgadmin4"

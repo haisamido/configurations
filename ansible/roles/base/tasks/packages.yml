@@ -60,6 +60,7 @@
       - nmap
       - net-tools
       - wireshark
+      - tshark
       - iotop
       - podman
       - podman-compose

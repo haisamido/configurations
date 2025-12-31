@@ -56,7 +56,7 @@
       - tar
       - make
       - docker.io
-      - docker-compose
+      - docker-compose-plugin
       - nmap
       - net-tools
       - wireshark

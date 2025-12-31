@@ -88,6 +88,7 @@
       - vim
       - snapd
       - golang-go
+      - ops
     state: present
 
 - name: packages|Install database packages and tools

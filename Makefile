@@ -43,6 +43,7 @@ add_repositories: updates
 	sudo add-apt-repository -y ppa:serge-rider/dbeaver-ce
 	sudo curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+	sudo sh -c 'echo "deb [trusted=yes] https://apt.fury.io/nanovms/ /" > /etc/apt/sources.list.d/fury.list'
 	$(MAKE) prep_docker
 	$(MAKE) updates
 

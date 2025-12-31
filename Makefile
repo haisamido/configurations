@@ -92,23 +92,12 @@ install_via_curl: install_preq ## install via curl
 # 	flatpak install -y io.kinvolk.Headlamp
 # 	curl -sS https://webi.sh/k9s
 
-install_via_snap: install_snapd ## install packages via snap
-	sudo snap install --classic terraform && terraform -install-autocomplete
-	sudo snap install --classic terragrunt
-	sudo snap install --classic aws-cli
-	sudo snap install --classic k9s
-	sudo snap install --classic kubectl
-	sudo snap install --classic yq
-	sudo snap install --classic helm
-	sudo snap install --classic freecad
-	sudo snap install --classic savedesktop
-
-install_via_ansible: ## install ansible and run playbook
+install_via_ansible: install_snapd## install ansible and run playbook
 	${PACKAGE_INSTALLER} ansible
 	ansible-galaxy collection install community.general
 	ansible-playbook -vv ./ansible/playbook-base.yml 
 
-install_all: | add_repositories install_preq install_via_curl install_via_ansible install_via_snap ## install all
+install_all: | add_repositories install_preq install_via_curl install_via_ansible ## install all
 	$(MAKE) config_post
 
 install_snapd:

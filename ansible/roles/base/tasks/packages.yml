@@ -129,3 +129,24 @@
       - io.github.shiftey.Desktop
       - com.discordapp.Discord
       - fm.reaper.Reaper
+
+- name: packages|Install classic snap packages
+  community.general.snap:
+    name:
+      - terraform
+      - terragrunt
+      - aws-cli
+      - k9s
+      - kubectl
+      - yq
+      - helm
+      - freecad
+      - savedesktop
+    classic: yes
+    state: present
+
+- name: packages|Configure terraform autocomplete
+  ansible.builtin.shell: terraform -install-autocomplete
+  args:
+    creates: ~/.bashrc
+  ignore_errors: true

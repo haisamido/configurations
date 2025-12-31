@@ -141,22 +141,10 @@ tasks:
       - sudo rm -f /etc/apt/preferences.d/nosnap.pref || true
       - sudo apt install snapd -y || true
 
-  install_via_snap:
-    desc: Install packages via snap
-    cmds:
-      - task: install_snapd
-      - sudo snap install --classic terraform && terraform -install-autocomplete || true
-      - sudo snap install --classic terragrunt || true
-      - sudo snap install --classic aws-cli || true
-      - sudo snap install --classic k9s || true
-      - sudo snap install --classic kubectl || true
-      - sudo snap install --classic yq || true
-      - sudo snap install --classic helm || true
-      - sudo snap install --classic freecad || true
-      - sudo snap install --classic savedesktop || true
-
   install_via_ansible:
     desc: Install ansible and run playbook
+    deps:
+      - install_snapd
     cmds:
       - "{{.PACKAGE_INSTALLER}} ansible || true"
       - ansible-galaxy collection install community.general || true
@@ -168,7 +156,6 @@ tasks:
       - task: install_preq
       - task: install_via_curl
       - task: install_via_ansible
-      - task: install_via_snap
       - task: config_post
 
   ansible_pull:

@@ -44,6 +44,10 @@ add_repositories: updates
 	sudo curl -s https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | sudo bash
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 	sudo sh -c 'echo "deb [trusted=yes] https://apt.fury.io/nanovms/ /" > /etc/apt/sources.list.d/fury.list'
+	echo 'Add Winehq Repo'
+# 	sudo mkdir -p /etc/apt/keyrings
+# 	sudo wget -O- dl.winehq.org | sudo gpg --dearmor -o /etc/apt/keyrings/winehq-archive.gpg
+# 	sudo wget -O /etc/apt/sources.list.d/winehq-noble.list dl.winehq.org
 	$(MAKE) prep_docker
 	$(MAKE) updates
 
@@ -56,19 +60,20 @@ prep_docker: ## prepare docker repository
   		"$$(. /etc/os-release && echo "$$VERSION_CODENAME")" stable" | \
   		sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-install_vscode_prereq:
-	sudo apt-get install wget gpg
-	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-	sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-	echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
-	rm -f packages.microsoft.gpg
+# install_vscode_prereq:
+# 	sudo apt-get install wget gpg
+# 	wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+# 	sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+# 	echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+# 	rm -f packages.microsoft.gpg
 
-install_vscode: ## install vscode
-	sudo apt install -y apt-transport-https
-	sudo apt update
-	sudo apt install -y code
+# install_vscode: ## install vscode
+# 	sudo apt install -y apt-transport-https
+# 	sudo apt update
+# 	sudo apt install -y code
 
-install_preq: add_repositories updates upgrades ## install prequisites
+install_prereq: add_repositories updates upgrades ## install prerequisites
+	sudo rm -f /etc/apt/preferences.d/nosnap.pref 
 	${PACKAGE_INSTALLER} apt-transport-https ca-certificates curl gnupg
 
 config_post: ## configure post installation
@@ -76,7 +81,7 @@ config_post: ## configure post installation
 	sudo usermod -aG docker $${USER}
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
 
-install_via_curl: install_preq ## install via curl
+install_via_curl: install_prereq ## install via curl
 	sudo sh -c "$$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 	sudo curl -sfL https://get.k3s.io | sh -
 	sudo curl -s https://fluxcd.io/install.sh | sudo bash
@@ -93,17 +98,17 @@ install_via_curl: install_preq ## install via curl
 # 	flatpak install -y io.kinvolk.Headlamp
 # 	curl -sS https://webi.sh/k9s
 
-install_via_ansible: install_snapd## install ansible and run playbook
+install_via_ansible: | install_prereq ## install ansible and run playbook
 	${PACKAGE_INSTALLER} ansible
 	ansible-galaxy collection install community.general
 	ansible-playbook -vv ./ansible/playbook-base.yml 
 
-install_all: | add_repositories install_preq install_via_curl install_via_ansible ## install all
+install_all: | install_via_curl install_via_ansible ## install all
 	$(MAKE) config_post
 
-install_snapd:
-	sudo rm -f /etc/apt/preferences.d/nosnap.pref && \
-	sudo apt install snapd
+# install_snapd:
+# 	sudo rm -f /etc/apt/preferences.d/nosnap.pref && \
+# 	sudo apt install snapd
 
 ansible_pull: installs ## ansible-pull
 	ansible-pull --url https://github.com/haisamido/configurations.git

@@ -94,6 +94,15 @@
       - portaudio19-dev
     state: present
 
+# - name: packages|Install winehq packages
+#   ansible.builtin.apt:
+#     name:
+#       - winehq-stable
+#       - wineasio
+#       - winehq-devel
+#       - winehq-staging
+#     state: present
+
 - name: packages|Install database packages and tools
   ansible.builtin.apt:
     name:

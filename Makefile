@@ -74,7 +74,7 @@ prep_docker: ## prepare docker repository
 
 install_prereq: add_repositories updates upgrades ## install prerequisites
 	sudo rm -f /etc/apt/preferences.d/nosnap.pref 
-	${PACKAGE_INSTALLER} apt-transport-https ca-certificates curl gnupg
+	${PACKAGE_INSTALLER} apt-transport-https ca-certificates curl gnupg flatpak
 
 config_post: ## configure post installation
 	sudo usermod -aG docker gitlab-runner

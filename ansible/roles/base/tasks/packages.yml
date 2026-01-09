@@ -92,6 +92,7 @@
       - golang-go
       - ops
       - portaudio19-dev
+      - freeglut3-dev
     state: present
 
 # - name: packages|Install winehq packages

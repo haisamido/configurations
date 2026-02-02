@@ -150,6 +150,7 @@ tasks:
       - "{{.PACKAGE_INSTALLER}} ansible || true"
       - ansible-galaxy collection install community.general || true
       - ansible-playbook -vv ./ansible/playbook-base.yml
+      - task: git:config
 
   install_all:
     desc: Install all packages and configurations
@@ -158,6 +159,13 @@ tasks:
       - task: install_via_curl
       - task: install_via_ansible
       - task: config_post
+      - task: git:config
+
+  git:config:
+    desc: Configure git user information
+    cmds:
+      - git config --local user.email "haisam.ido@gmail.com"
+      - git config --local user.name "Haisam Ido"
 
   ansible_pull:
     desc: Run ansible-pull from GitHub repository

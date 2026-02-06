@@ -43,119 +43,92 @@ brew update && brew cleanup
 brew upgrade 
 brew upgrade --cask
 
-brew install amazon-ecs-cli \
+brew install mazon-ecs-cli \
   ansible \
-  aom \
   autoconf \
   aws-shell \
   awscli \
   awslogs \
-  bash \
-  bash-completion \
+  bash-completion@2 \
   cask \
   cmake \
   colordiff \
-  coreutils \
-  couchdb \
   container-diff \
+  couchdb \
   cspice \
   curl \
   direnv \
   dive \
+  docker \
   docker-squash \
   docutils \
   dos2unix \
   duckdb \
-  emacs \
-  ffmpeg \
-  fig2dev \
+  emscripten \
   fluid-synth \
-  flux \
+  fluxcd/tap/flux \
   gawk \
-  gcc \
-  gd \
-  gettext \
   gh \
-  ghostscript \
   git \
   gitlab-ci-local \
-  glib \
+  gnu-getopt \
   gnu-sed \
-  gnupg \
   gnuplot \
-  gnutls \
-  go \
   go-md2man \
   go-task \
-  gpgme \
   gradle \
-  graphicsmagick \
   graphviz \
   grep \
-  gts \
-  harfbuzz \
-  hdf5 \
-  helm \
+  hashicorp/tap/terraform \
+  hiredis \
   htop \
   iftop \
-  imagemagick \
+  jansson \
   javacc \
-  openjdk \
-  jpeg-xl \
   jq \
   jupyter-r \
-  jupyterlab \
   k3sup \
   k9s \
   kind \
   kompose \
+  kreuzwerker/taps/m1-terraform-provider-helper \
   kubectx \
-  kubernetes-cli \
   kustomize \
   lazydocker \
-  libass \
-  libavif \
   libfido2 \
-  libheif \
-  librsvg \
+  lilypond \
   links \
   lynx \
-  lz4 \
   make \
   maven \
+  memcached \
   midnight-commander \
   minikube \
   mysql \
   nano \
   netcat \
-  netpbm \
   nmap \
-  node \
+  node@20 \
   nvm \
   octave \
-  open-mpi \
   openconnect \
+  openjdk@21 \
   openvpn \
   p7zip \
-  pandoc \
   parallel \
   peco \
   pidof \
   pipx \
-  pmix \
-  podman \
   podman-compose \
   poppler \
-  postgresql \
-  pulumi \
+  postgresql@15 \
+  pulumi/tap/pulumi \
   pyqt \
   pyqt@5 \
   python-matplotlib \
-  python3 \
   qemu \
-  qscintilla2 \
   qt \
-  r \
+  redis \
   rpm2cpio \
   rsync \
   ruby \
@@ -164,18 +137,23 @@ brew install amazon-ecs-cli \
   scrcpy \
   socket_vmnet \
   speedtest-cli \
-  suite-sparse \
-  sundials \
+  swig \
   tcpdump \
-  terraform \
   terragrunt \
   tig \
   tmux \
-  tree \
+  txn2/tap/kubefwd \
+  uv \
+  virt-manager \
   watch \
   wget \
+  wxwidgets \
+  wxwidgets@3.2 \
+  xcodes \
+  xerces-c \
   xq \
-  yq
+  yq \
+  zsync
 
 brew install --cask \
   ableton-live-suite \

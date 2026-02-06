@@ -1,0 +1,147 @@
+# brew leaves -r > ../configurations/brew_installs.txt \
+
+amazon-ecs-cli \
+ansible \
+autoconf \
+aws-shell \
+awscli \
+awslogs \
+bash-completion@2 \
+cask \
+cmake \
+colordiff \
+container-diff \
+couchdb \
+cspice \
+curl \
+direnv \
+dive \
+docker \
+docker-squash \
+docutils \
+dos2unix \
+duckdb \
+emscripten \
+fluid-synth \
+fluxcd/tap/flux \
+gawk \
+gh \
+git \
+gitlab-ci-local \
+gnu-getopt \
+gnu-sed \
+gnuplot \
+go-md2man \
+go-task \
+gradle \
+graphviz \
+grep \
+hashicorp/tap/terraform \
+hiredis \
+htop \
+iftop \
+jansson \
+javacc \
+jq \
+jupyter-r \
+k3sup \
+k9s \
+kind \
+kompose \
+kreuzwerker/taps/m1-terraform-provider-helper \
+kubectx \
+kustomize \
+lazydocker \
+libfido2 \
+lilypond \
+links \
+lynx \
+make \
+maven \
+memcached \
+midnight-commander \
+minikube \
+mysql \
+nano \
+netcat \
+nmap \
+node@20 \
+nvm \
+octave \
+openconnect \
+openjdk@21 \
+openvpn \
+p7zip \
+parallel \
+peco \
+pidof \
+pipx \
+podman-compose \
+poppler \
+postgresql@15 \
+pulumi/tap/pulumi \
+pyqt \
+pyqt@5 \
+python-matplotlib \
+qemu \
+qt \
+redis \
+rpm2cpio \
+rsync \
+ruby \
+rust \
+s3cmd \
+scrcpy \
+socket_vmnet \
+speedtest-cli \
+swig \
+tcpdump \
+terragrunt \
+tig \
+tmux \
+txn2/tap/kubefwd \
+uv \
+virt-manager \
+watch \
+wget \
+wxwidgets \
+wxwidgets@3.2 \
+xcodes \
+xerces-c \
+xq \
+yq \
+zsync \
+ \
+
+cask:
+
+brew list --cask | cat
+adobe-acrobat-reader
+android-platform-tools
+audacity
+blender
+db-browser-for-sqlite
+dbeaver-community
+eclipse-ide
+firefox
+github
+google-chrome
+headlamp
+mysqlworkbench
+openscad
+podman-desktop
+postgres-unofficial
+processing
+quarto
+rstudio
+session-manager-plugin
+sublime-text
+surge-xt
+tigervnc
+tigervnc-viewer
+utm
+vagrant
+virtualbox
+visual-studio-code
+vlc
+xquartz

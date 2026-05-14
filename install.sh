@@ -2,13 +2,13 @@
 
 defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 
-if ! test -e "${HOME}/.bash_profile"; then
-  curl https://raw.githubusercontent.com/haisamido/configurations/refs/heads/main/.bash_profile > ${HOME}/.bash_profile
-  if test -e "${HOME}/.bashrc"; then
-    mv ${HOME}/.bashrc ${HOME}/.bashrc.orig
-  fi
-  ln -sf ${HOME}/.bash_profile ${HOME}/.bashrc
-fi
+# if ! test -e "${HOME}/.bash_profile"; then
+#   curl https://raw.githubusercontent.com/haisamido/configurations/refs/heads/main/.bash_profile > ${HOME}/.bash_profile
+#   if test -e "${HOME}/.bashrc"; then
+#     mv ${HOME}/.bashrc ${HOME}/.bashrc.orig
+#   fi
+#   ln -sf ${HOME}/.bash_profile ${HOME}/.bashrc
+# fi
 
 mkdir -p ${HOME}/development/github.com/
 mkdir -p ${HOME}/.ssh && chmod 700 ${HOME}/.ssh
@@ -70,7 +70,6 @@ work() {
     duckdb \
     emscripten \
     espeak-ng \
-    fluid-synth \
     fluxcd/tap/flux \
     gawk \
     gh \
@@ -166,7 +165,6 @@ work() {
     adobe-acrobat-reader \
     dbeaver-community \
     eclipse-ide \
-    freecad \
     github \
     headlamp \
     inkscape \
@@ -202,6 +200,8 @@ home() {
     blender \
     docker \
     firefox \
+    fluid-synth \
+    freecad \
     google-chrome \
     google-drive \
     lmms \
@@ -231,8 +231,3 @@ case "${choice}" in
   3) brewup ;;
   *) echo "Invalid choice"; exit 1 ;;
 esac
-
-# Python stuff
-#pip3 install --user bitstring uritools nose tornado boto3 lz4tools genson pypi matplotlib numpy py-gnuplot debugpy
-#   guitar-pro \
-#sudo scutil --set ComputerName foobar

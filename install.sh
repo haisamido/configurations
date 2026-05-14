@@ -35,13 +35,15 @@ fi
 # Installs cask which allows one to install mac os x native applications (below)
 brew install cask
 
-# Housecleaning
-brew update && brew cleanup
+brewup() {
+  # Housecleaning
+  brew update && brew cleanup
 
-# Upgrade applications if there are any
-#brew outdated | xargs brew upgrade
-brew upgrade
-brew upgrade --cask
+  # Upgrade applications if there are any
+  #brew outdated | xargs brew upgrade
+  brew upgrade
+  brew upgrade --cask
+}
 
 work() {
   brew install act \
@@ -176,6 +178,7 @@ work() {
     processing \
     quarto \
     rstudio \
+    r-app \
     session-manager-plugin \
     sublime-text \
     tigervnc \
@@ -208,10 +211,11 @@ home() {
     surge-xt
 }
 
-echo "Select environment:"
+echo "Select action:"
 echo "  1) work"
 echo "  2) home"
-read -r -p "Choice [1/2]: " choice
+echo "  3) brewup"
+read -r -p "Choice [1/2/3]: " choice
 
 case "${choice}" in
   1) work ;;
@@ -224,6 +228,7 @@ case "${choice}" in
       exit 0
     fi
     ;;
+  3) brewup ;;
   *) echo "Invalid choice"; exit 1 ;;
 esac
 

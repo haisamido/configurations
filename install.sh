@@ -10,7 +10,7 @@ defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 #   ln -sf ${HOME}/.bash_profile ${HOME}/.bashrc
 # fi
 
-mkdir -p ${HOME}/development/github.com/
+mkdir -p ${HOME}/development/
 mkdir -p ${HOME}/.ssh && chmod 700 ${HOME}/.ssh
 
 sudo bash -c "

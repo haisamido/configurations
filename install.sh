@@ -13,36 +13,29 @@ defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 mkdir -p ${HOME}/development/
 mkdir -p ${HOME}/.ssh && chmod 700 ${HOME}/.ssh
 
-sudo bash -c "
-  #softwareupdate -i -a
-  #softwareupdate --install-rosetta
-  xcode-select --install
-  xcodebuild -license accept
-  chsh -s /bin/bash
-"
-# Installs or updates homebrew
-if [[ $(command -v brew) == "" ]]; then
-  echo "Installing Hombrew"
+install_xcode() {
+  sudo bash -c "
+    #softwareupdate -i -a
+    #softwareupdate --install-rosetta
+    xcode-select --install
+    xcodebuild -license accept
+    chsh -s /bin/bash
+  "
+}
+
+install() {
+  echo "Installing Homebrew"
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ${HOME}/.bash_profile
   eval "$(/opt/homebrew/bin/brew shellenv)"
-else
-  echo "Updating Homebrew"
+  brew install cask
+}
+
+update() {
   brew update
-fi
-# http://macappstore.org/
-
-# Installs cask which allows one to install mac os x native applications (below)
-brew install cask
-
-brewup() {
-  # Housecleaning
-  brew update && brew cleanup
-
-  # Upgrade applications if there are any
-  #brew outdated | xargs brew upgrade
   brew upgrade
   brew upgrade --cask
+  brew cleanup
 }
 
 work() {
@@ -211,15 +204,22 @@ home() {
     surge-xt
 }
 
+if [[ $(command -v brew) == "" ]]; then
+  install
+fi
+
 echo "Select action:"
-echo "  1) work"
-echo "  2) home"
-echo "  3) brewup"
-read -r -p "Choice [1/2/3]: " choice
+echo "  1) install_xcode"
+echo "  2) update"
+echo "  3) work"
+echo "  4) home"
+read -r -p "Choice [1/2/3/4]: " choice
 
 case "${choice}" in
-  1) work ;;
-  2)
+  1) install_xcode ;;
+  2) update ;;
+  3) work ;;
+  4)
     read -r -p "Are you sure you want to install home packages? [y/N]: " confirm
     if [[ "${confirm}" =~ ^[Yy]$ ]]; then
       home
@@ -228,6 +228,5 @@ case "${choice}" in
       exit 0
     fi
     ;;
-  3) brewup ;;
   *) echo "Invalid choice"; exit 1 ;;
 esac

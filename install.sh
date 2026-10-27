@@ -40,6 +40,7 @@ update() {
 
 work() {
   brew install act \
+    actionlint \
     amazon-ecs-cli \
     ansible \
     autoconf \
@@ -63,7 +64,6 @@ work() {
     duckdb \
     emscripten \
     espeak-ng \
-    fluxcd/tap/flux \
     gawk \
     gh \
     git \
@@ -71,12 +71,12 @@ work() {
     gnu-getopt \
     gnu-sed \
     gnuplot \
+    go \
     go-md2man \
     go-task \
     gradle \
     graphviz \
     grep \
-    hashicorp/tap/terraform \
     hiredis \
     htop \
     iftop \
@@ -88,9 +88,9 @@ work() {
     jupytext \
     k3sup \
     k9s \
+    kionsoftware/tap/kion-cli \
     kind \
     kompose \
-    kreuzwerker/taps/m1-terraform-provider-helper \
     kubectx \
     kustomize \
     lazydocker \
@@ -112,6 +112,7 @@ work() {
     octave \
     openconnect \
     openjdk@21 \
+    openmotif \
     openvpn \
     p7zip \
     parallel \
@@ -121,7 +122,6 @@ work() {
     podman-compose \
     poppler \
     postgresql@15 \
-    pulumi/tap/pulumi \
     pyqt \
     pyqt@5 \
     python-matplotlib \
@@ -134,6 +134,7 @@ work() {
     rust \
     s3cmd \
     scrcpy \
+    skopeo \
     socket_vmnet \
     speedtest-cli \
     swig \
@@ -141,7 +142,7 @@ work() {
     terragrunt \
     tig \
     tmux \
-    txn2/tap/kubefwd \
+    trivy \
     uv \
     virt-manager \
     watch \
@@ -156,11 +157,13 @@ work() {
 
   brew install --cask \
     adobe-acrobat-reader \
+    brave-browser \
     dbeaver-community \
     eclipse-ide \
     github \
     headlamp \
     inkscape \
+    kiro-cli \
     lens \
     pgadmin4 \
     podman-desktop \
@@ -168,8 +171,8 @@ work() {
     postgres-unofficial \
     processing \
     quarto \
-    rstudio \
     r-app \
+    rstudio \
     session-manager-plugin \
     sublime-text \
     tigervnc \

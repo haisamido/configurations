@@ -117,13 +117,15 @@ work() {
     p7zip \
     parallel \
     peco \
+    perl \
     pidof \
     pipx \
     podman-compose \
     poppler \
-    postgresql@15 \
+    postgresql@17 \
     pyqt \
     pyqt@5 \
+    python \
     python-matplotlib \
     qemu \
     qt \
@@ -155,8 +157,8 @@ work() {
     yq \
     zsync
 
+# adobe-acrobat-reader will be installed by the entity managing device 
   brew install --cask \
-    adobe-acrobat-reader \
     brave-browser \
     dbeaver-community \
     eclipse-ide \
@@ -190,6 +192,7 @@ home() {
 
   brew install --cask \
     ableton-live-suite \
+    adobe-acrobat-reader \
     android-platform-tools \
     arduino \
     audacity \

@@ -5,14 +5,40 @@ defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 mkdir -p ${HOME}/development/
 mkdir -p ${HOME}/.ssh && chmod 700 ${HOME}/.ssh
 
+SHELL_PREFERRED=bash
+export HOMEBREW_NO_ASK=1
+
+# export HOMEBREW=/opt/homebrew
+# mkdir -p ${HOMEBREW}
+# git clone --depth=1 https://github.com/Homebrew/brew "${HOMEBREW}"
+
 install_xcode() {
   sudo bash -c "
     #softwareupdate -i -a
     #softwareupdate --install-rosetta
     xcode-select --install
     xcodebuild -license accept
-    chsh -s /bin/bash
   "
+}
+
+set_shell() {
+  [[ "${SHELL_PREFERRED}" == "bash" ]] || return 0
+
+  local brew_bash
+  brew_bash="$(brew --prefix 2>/dev/null)/bin/bash"
+  if [[ ! -x "${brew_bash}" ]]; then
+    echo "Homebrew bash not found, leaving login shell unchanged"
+    return 0
+  fi
+
+  # chsh only accepts shells listed in /etc/shells
+  if ! grep -qxF "${brew_bash}" /etc/shells; then
+    echo "${brew_bash}" | sudo tee -a /etc/shells > /dev/null
+  fi
+
+  if [[ "$(dscl . -read ~/ UserShell | awk '{print $2}')" != "${brew_bash}" ]]; then
+    chsh -s "${brew_bash}"
+  fi
 }
 
 install() {
@@ -39,14 +65,16 @@ work() {
     aws-shell \
     awscli \
     awslogs \
+    bash \
     bash-completion@2 \
     cask \
     cmake \
     colordiff \
-    container-diff \
+    coreutils \
     couchdb \
     cspice \
     curl \
+    diffoci \
     direnv \
     dive \
     docker \
@@ -88,7 +116,6 @@ work() {
     kustomize \
     lazydocker \
     libfido2 \
-    lilypond \
     links \
     lynx \
     make \
@@ -96,7 +123,6 @@ work() {
     memcached \
     midnight-commander \
     minikube \
-    mysql \
     nano \
     netcat \
     nmap \
@@ -107,6 +133,7 @@ work() {
     openjdk@21 \
     openmotif \
     openvpn \
+    p11-kit \
     p7zip \
     parallel \
     peco \
@@ -115,7 +142,7 @@ work() {
     pipx \
     podman-compose \
     poppler \
-    postgresql@17 \
+    postgresql \
     pyqt \
     pyqt@5 \
     python \
@@ -150,7 +177,6 @@ work() {
     yq \
     zsync
 
-# adobe-acrobat-reader will be installed by the entity managing device 
   brew install --cask \
     brave-browser \
     dbeaver-community \
@@ -158,26 +184,18 @@ work() {
     github \
     headlamp \
     inkscape \
-    kiro-cli \
     lens \
     pgadmin4 \
     podman-desktop \
     postgres-app \
     postgres-unofficial \
     processing \
-    quarto \
-    r-app \
-    rstudio \
-    session-manager-plugin \
     sublime-text \
     tigervnc \
     tigervnc-viewer \
     utm \
-    vagrant \
-    virtualbox \
     visual-studio-code \
-    vlc \
-    xquartz
+    vlc
 }
 
 home() {
@@ -190,17 +208,31 @@ home() {
     arduino \
     audacity \
     blender \
-    docker \
     firefox \
     fluid-synth \
     freecad \
     google-chrome \
     google-drive \
+    lilypond \
     lmms \
     openscad \
     reaper \
     steam \
     surge-xt
+}
+
+sudo_needed() {
+  sudo brew install docker-desktop \
+    kiro-cli \
+    launchctl \
+    mysql \
+    quarto \
+    r-app \
+    rstudio \
+    session-manager-plugin \
+    vagrant \
+    virtualbox \
+    xquartz
 }
 
 if [[ $(command -v brew) == "" ]]; then

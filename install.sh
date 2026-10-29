@@ -79,7 +79,7 @@ work() {
     jupyter-r \
     jupytext \
     k3sup \
-    k9s \
+    derailed/k9s/k9s \
     kionsoftware/tap/kion-cli \
     kind \
     kompose \

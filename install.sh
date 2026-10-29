@@ -83,6 +83,7 @@ work() {
     kionsoftware/tap/kion-cli \
     kind \
     kompose \
+    kubectl \
     kubectx \
     kustomize \
     lazydocker \

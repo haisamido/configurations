@@ -294,7 +294,6 @@ home() {
 sudo_needed() {
   brew install docker-desktop \
     kiro-cli \
-    mysql \
     quarto \
     r-app \
     rstudio \

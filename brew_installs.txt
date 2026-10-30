@@ -62,7 +62,6 @@ minikube
 nano
 netcat
 nmap
-node@20
 nvm
 octave
 openjdk@21
@@ -76,10 +75,7 @@ pidof
 pipx
 podman-compose
 postgresql@18
-pyqt
-pyqt@5
 python-matplotlib
-qt
 redis
 rpm2cpio
 rsync

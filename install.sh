@@ -187,7 +187,6 @@ work() {
     nano \
     netcat \
     nmap \
-    node@20 \
     nvm \
     octave \
     openconnect \
@@ -204,12 +203,9 @@ work() {
     podman-compose \
     poppler \
     postgresql \
-    pyqt \
-    pyqt@5 \
     python \
     python-matplotlib \
     qemu \
-    qt \
     redis \
     rpm2cpio \
     rsync \

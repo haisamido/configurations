@@ -1,18 +1,43 @@
 #!/bin/bash
 
+SHELL_PREFERRED=bash
+
+# Membership in the admin group is what grants sudo on macOS. Checking it doesn't
+# invoke sudo, so it won't prompt for a password or log a failed attempt
+if dseditgroup -o checkmember -m "${USER}" admin > /dev/null 2>&1; then
+  HAS_ADMIN=true
+else
+  HAS_ADMIN=false
+  echo "${USER} is not an administrator, skipping steps that need sudo"
+fi
+
+# Homebrew and every source build need the Command Line Tools
+if ! xcode-select -p > /dev/null 2>&1; then
+  echo "Command Line Tools not found. Starting the installer, re-run this script when it finishes."
+  xcode-select --install
+  exit 1
+fi
+
+# Enable tap to click on the trackpad (off by default). Takes effect after logging out and back in
 defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
 
-mkdir -p ${HOME}/development/
-mkdir -p ${HOME}/.ssh && chmod 700 ${HOME}/.ssh
+# Keep the Mac awake until this script exits, so long source builds aren't interrupted by sleep
+caffeinate -is -w $$ &
 
-SHELL_PREFERRED=bash
+# Prepare development and ssh area
+mkdir -p "${HOME}/development/"
+mkdir -p "${HOME}/.ssh" && chmod 700 "${HOME}/.ssh"
+
+# Homebrew configs
+# Homebrew 7 asks "Do you want to proceed with the installation? [y/n]" whenever an install
+# pulls in dependencies. Turn that off so long unattended runs don't stall waiting for input
 export HOMEBREW_NO_ASK=1
 
-# export HOMEBREW=/opt/homebrew
-# mkdir -p ${HOMEBREW}
-# git clone --depth=1 https://github.com/Homebrew/brew "${HOMEBREW}"
-
 install_xcode() {
+  if [[ "${HAS_ADMIN}" != true ]]; then
+    echo "install_xcode needs sudo, skipping"
+    return 0
+  fi
   sudo bash -c "
     #softwareupdate -i -a
     #softwareupdate --install-rosetta
@@ -33,6 +58,10 @@ set_shell() {
 
   # chsh only accepts shells listed in /etc/shells
   if ! grep -qxF "${brew_bash}" /etc/shells; then
+    if [[ "${HAS_ADMIN}" != true ]]; then
+      echo "Adding ${brew_bash} to /etc/shells needs sudo, leaving login shell unchanged"
+      return 0
+    fi
     echo "${brew_bash}" | sudo tee -a /etc/shells > /dev/null
   fi
 
@@ -41,12 +70,44 @@ set_shell() {
   fi
 }
 
-install() {
-  echo "Installing Homebrew"
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ${HOME}/.bash_profile
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-  brew install cask
+# /opt/homebrew is the official location and gets prebuilt bottles, but needs admin rights.
+# ~/.local/homebrew needs no admin rights, but many formulae build from source there
+install_homebrew() {
+  # The official installer uses /opt/homebrew on Apple Silicon and /usr/local on Intel
+  local system_prefix=/opt/homebrew
+  [[ "$(uname -m)" == x86_64 ]] && system_prefix=/usr/local
+
+  local prefix="${HOME}/.local/homebrew" choice
+  if [[ "${HAS_ADMIN}" == true ]]; then
+    read -r -p "Install Homebrew in 1) ${system_prefix} (needs sudo) or 2) ~/.local/homebrew? [1/2]: " choice
+    [[ "${choice}" == 1 ]] && prefix="${system_prefix}"
+  fi
+  echo "Installing Homebrew into ${prefix}"
+
+  # Lines added to ~/.bash_profile (if missing) and applied to this run
+  local profile_lines=("eval \"\$(${prefix}/bin/brew shellenv)\"")
+  if [[ "${prefix}" == "${system_prefix}" ]]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  else
+    mkdir -p "${prefix}" "${HOME}/Applications-user"
+    curl -fsSL https://github.com/Homebrew/brew/tarball/HEAD | tar xz --strip-components=1 -C "${prefix}"
+    # Casks default to /Applications, which needs admin rights
+    profile_lines+=("export HOMEBREW_CASK_OPTS=\"--appdir=\${HOME}/Applications-user\"")
+  fi
+
+  if [[ ! -x "${prefix}/bin/brew" ]]; then
+    echo "Homebrew installation into ${prefix} failed"
+    exit 1
+  fi
+
+  local line
+  for line in "${profile_lines[@]}"; do
+    grep -qxF "${line}" "${HOME}/.bash_profile" 2>/dev/null || echo "${line}" >> "${HOME}/.bash_profile"
+    eval "${line}"
+  done
+
+  # The tarball has no git history; this turns it into a normal, updatable install
+  [[ "${prefix}" == "${system_prefix}" ]] || brew update --force --quiet
 }
 
 update() {
@@ -188,43 +249,55 @@ work() {
     pgadmin4 \
     podman-desktop \
     postgres-app \
-    postgres-unofficial \
     processing \
     sublime-text \
     tigervnc \
-    tigervnc-viewer \
     utm \
     visual-studio-code \
     vlc
+
+  if [[ "${HAS_ADMIN}" == true ]]; then
+    sudo_needed
+  fi
+
+#  set_shell
 }
 
 home() {
   work
 
+  brew install fluid-synth \
+    lilypond
+
   brew install --cask \
     ableton-live-suite \
-    adobe-acrobat-reader \
     android-platform-tools \
-    arduino \
+    arduino-ide \
     audacity \
     blender \
     firefox \
-    fluid-synth \
     freecad \
     google-chrome \
-    google-drive \
-    lilypond \
     lmms \
     openscad \
     reaper \
-    steam \
-    surge-xt
+    steam
+
+  # These use .pkg installers, which need admin rights
+  if [[ "${HAS_ADMIN}" == true ]]; then
+    brew install --cask \
+      adobe-acrobat-reader \
+      google-drive \
+      surge-xt
+  fi
 }
 
+# Packages that need admin rights to install: their .pkg installers or system extensions
+# write to /Applications, /Library, /opt or /usr/local. Run only when HAS_ADMIN=true.
+# No sudo here: Homebrew refuses to run as root and asks for a password itself when needed
 sudo_needed() {
-  sudo brew install docker-desktop \
+  brew install docker-desktop \
     kiro-cli \
-    launchctl \
     mysql \
     quarto \
     r-app \
@@ -235,8 +308,17 @@ sudo_needed() {
     xquartz
 }
 
-if [[ $(command -v brew) == "" ]]; then
-  install
+# Load an existing Homebrew even if this shell doesn't have it on PATH, so it isn't reinstalled
+for p in "${HOME}/.local/homebrew" /opt/homebrew /usr/local; do
+  [[ -x "${p}/bin/brew" ]] && eval "$("${p}/bin/brew" shellenv)" && break
+done
+if ! command -v brew > /dev/null; then
+  install_homebrew
+fi
+
+# Casks default to /Applications, which needs admin rights. Don't rely on the profile having this
+if [[ "$(brew --prefix)" == "${HOME}/.local/homebrew" && -z "${HOMEBREW_CASK_OPTS}" ]]; then
+  export HOMEBREW_CASK_OPTS="--appdir=${HOME}/Applications-user"
 fi
 
 echo "Select action:"

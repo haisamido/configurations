@@ -158,6 +158,7 @@ work() {
     gradle \
     graphviz \
     grep \
+    helm \
     hiredis \
     htop \
     iftop \
@@ -189,7 +190,6 @@ work() {
     nmap \
     nvm \
     octave \
-    openconnect \
     openjdk@21 \
     openmotif \
     openvpn \
@@ -205,7 +205,6 @@ work() {
     postgresql \
     python \
     python-matplotlib \
-    qemu \
     redis \
     rpm2cpio \
     rsync \
@@ -214,7 +213,6 @@ work() {
     s3cmd \
     scrcpy \
     skopeo \
-    socket_vmnet \
     speedtest-cli \
     swig \
     tcpdump \
@@ -223,7 +221,6 @@ work() {
     tmux \
     trivy \
     uv \
-    virt-manager \
     watch \
     wget \
     wxwidgets \

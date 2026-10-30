@@ -303,13 +303,13 @@ For Kubernetes, create clusters with `kind create cluster`, or with
 |---|---|
 | `docker-desktop` | It installs with a `sudo` prompt (the PIV PIN prompt on smart-card Macs) and conflicts with Podman. It also changes `~/.docker/config.json` (`credsStore: desktop`), which breaks `docker login` once it's removed. |
 | `virtualbox`, `vagrant`, `xquartz` | Their installers need admin rights: kernel or system extensions, `/opt` and system services. |
+| `socket_vmnet` | Needs root to provide VM networking, so it does nothing without admin rights. |
 | `mysql` | A very long source build, and it's easy to interrupt partway through. Run it in Podman instead: `podman run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=... mysql:8.4`. |
 
 Some packages in `work()` install without admin rights but are limited without it:
 
 | Package | Limitation |
 |---|---|
-| `socket_vmnet` | Installs, but needs root to provide VM networking, so QEMU VMs fall back to user-mode networking. |
 | `postgresql` | Builds from source, which takes a while. The `postgresql` alias follows the newest major version, and data folders from an older major version need a migration. |
 
 Rootless alternatives for packages that need admin:

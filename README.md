@@ -1,8 +1,9 @@
 # configurations
 
 Setup for Apple Silicon Macs: Homebrew in `/opt/homebrew`, the packages to
-install, and a shell profile. It works on Macs where you have admin rights all
-the time, some of the time, or not at all.
+install, and a shell profile. Setting it up needs admin rights once. After
+that, formulae install and update without admin, so it keeps working on Macs
+where admin rights come and go.
 
 | File | What it is |
 |---|---|
@@ -14,66 +15,32 @@ the time, some of the time, or not at all.
 
 ## New Mac, step by step
 
-Steps 1, 4 and 6 need admin rights once (or IT's help). If your admin rights
-are temporary, do those steps while you have them. To check whether you're an
-admin right now:
-
-```bash
-dseditgroup -o checkmember -m "$USER" admin
-```
-
-### 1. Command Line Tools
-
-Homebrew and `git` need Apple's Command Line Tools. Check whether they're
-already installed (on managed Macs, IT often installs them):
-
-```bash
-xcode-select -p
-```
-
-If that prints an error, run `xcode-select --install`. If it asks for an
-administrator password you don't have, ask IT to install them.
-
-### 2. Get this repo
-
-```bash
-mkdir -p ~/development/github.com/haisamido
-cd ~/development/github.com/haisamido
-git clone https://github.com/haisamido/configurations.git
-cd configurations
-```
-
-### 3. Install Homebrew
+### 1. Install Homebrew (once you have sudo)
 
 Homebrew goes in `/opt/homebrew`, its official location on Apple Silicon, so
 packages install from prebuilt bottles in minutes.
 
-- **With admin rights,** run the official installer. It creates
-  `/opt/homebrew`, makes you the owner, and asks for your password:
-  ```bash
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  ```
-- **Without admin,** the installer can't create `/opt/homebrew`. Have IT run
-  this from your account (for example by granting you temporary admin), so
-  that `$USER` is you:
-  ```bash
-  sudo mkdir -p /opt/homebrew
-  sudo chown -R "$USER":admin /opt/homebrew
-  ```
-  Then run the installer command above. It doesn't need `sudo` once the folder
-  is yours.
+Create `/opt/homebrew` and make yourself the owner, then run the official
+installer:
 
-Skip the "Next steps" the installer prints about `~/.zprofile`. Step 5 replaces
-them. For now, switch the current window to the new brew:
+```bash
+sudo mkdir -p /opt/homebrew
+sudo chown -R "$USER":admin /opt/homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Because the folder is already yours, `brew` never needs `sudo` afterwards, even
+once your admin rights are gone.
+
+Skip the "Next steps" the installer prints about `~/.zprofile`. [Step 3](#3-shell-profile)
+replaces them. For now, switch the current window to the new brew:
 
 ```bash
 eval "$(/opt/homebrew/bin/brew shellenv)"
 brew --prefix    # /opt/homebrew
 ```
 
-Once `/opt/homebrew` belongs to you, `brew` never needs admin again.
-
-### 4. Install the packages
+### 2. Install the packages
 
 ```bash
 ./install.sh     # choose 1) Install work, or 4) Install home for work plus home
@@ -81,10 +48,10 @@ Once `/opt/homebrew` belongs to you, `brew` never needs admin again.
 
 Apps (casks) are only installed if you're an admin. Without admin, `work`
 installs the formulae and says it skipped the apps. Once you have admin, choose
-`3)` to install just the apps. See [install.sh](#installsh) for what it checks and what each choice
-does.
+`3)` to install just the apps. See [install.sh](#installsh) for what it checks
+and what each choice does.
 
-### 5. Shell profile
+### 3. Shell profile
 
 ```bash
 cp ~/.bash_profile ~/.bash_profile.bak 2>/dev/null
@@ -96,9 +63,9 @@ identities) in `~/.bash_profile.local`. The profile loads it at the end, and it
 isn't in the repo, so it stays private. See [Shell profile](#shell-profile) for
 what each part does.
 
-### 6. Login shell
+### 4. Login shell
 
-macOS ships bash 3.2. Tab completion needs the newer bash that step 4
+macOS ships bash 3.2. Tab completion needs the newer bash that step 2
 installed. Making it your login shell needs admin, because `chsh` only accepts
 shells listed in `/etc/shells`, which is owned by root:
 
@@ -107,16 +74,9 @@ echo /opt/homebrew/bin/bash | sudo tee -a /etc/shells
 chsh -s /opt/homebrew/bin/bash
 ```
 
-### 7. Podman
+### 5. Podman
 
-Use the `applehv` provider. Create `~/.config/containers/containers.conf`:
-
-```toml
-[machine]
-provider = "applehv"
-```
-
-Then create and start the machine. Size it to your hardware:
+Create and start the machine. Size it to your hardware:
 
 ```bash
 podman machine init --cpus 12 --memory 65536 --disk-size 500 --rootful --now
@@ -126,7 +86,7 @@ podman run --rm hello-world
 `--memory` is in MiB and `--disk-size` is in GiB. See [Podman](#podman) for
 details.
 
-### 8. Log out and back in
+### 6. Log out and back in
 
 This makes every app, including Terminal and VS Code, use the new login shell,
 and turns on tap to click. Then open a terminal and check:
@@ -144,7 +104,7 @@ podman ps
 It runs these checks first, and stops with a message if one fails:
 
 1. **Apple Silicon.** Intel Macs aren't supported.
-2. **Homebrew.** It must be installed in `/opt/homebrew` (step 3). The script
+2. **Homebrew.** It must be installed in `/opt/homebrew` (step 1). The script
    uses that brew even if another one comes first on your `PATH`.
 3. **Admin rights.** It checks whether your account is in the `admin` group,
    without calling `sudo`. If not, it carries on and skips the apps (casks)
@@ -210,7 +170,7 @@ because almost everything is a bottle.
    ```bash
    <old-prefix>/bin/brew bundle dump --file=~/Brewfile --tap --formula --cask
    ```
-2. **Install Homebrew into `/opt/homebrew`** ([step 3](#3-install-homebrew)).
+2. **Install Homebrew into `/opt/homebrew`** ([step 1](#1-install-homebrew-once-you-have-sudo)).
 3. **Switch only the current terminal window** to the new brew. Leave
    `~/.bash_profile` alone for now, or every new window loses your tools until
    the reinstall finishes:
@@ -228,8 +188,8 @@ because almost everything is a bottle.
    `--adopt` only takes over an app that is identical to the one being
    installed. For any that fail, run `brew install --cask --force <name>`. This
    replaces the `.app` but keeps your settings in `~/Library`.
-5. **Switch `~/.bash_profile`** ([step 5](#5-shell-profile)). Open a new
-   terminal and run the checks in [step 8](#8-log-out-and-back-in).
+5. **Switch `~/.bash_profile`** ([step 3](#3-shell-profile)). Open a new
+   terminal and run the checks in [step 6](#6-log-out-and-back-in).
 6. **Delete the old Homebrew** once everything works.
 
 ## Shell profile
@@ -252,7 +212,7 @@ What [.bash_profile](.bash_profile) does, in order:
   prompt.
 - **Tab completion** comes from `bash-completion@2`, which also loads `task`,
   `kubectl` and `gh` completions. It needs bash 4.2 or newer, so it only works
-  once your login shell is Homebrew's bash ([step 6](#6-login-shell)).
+  once your login shell is Homebrew's bash ([step 4](#4-login-shell)).
 - **`DOCKER_HOST`** points `docker`, `act`, `lazydocker` and `dive` at Podman's
   socket. The socket lives in a temporary folder whose path can change, so it's
   looked up each time a shell starts, and it's set only when a Podman machine
@@ -367,13 +327,13 @@ If you can't get admin rights, these replace some of the apps:
 
 | Symptom | Cause and fix |
 |---|---|
-| `Homebrew isn't installed in /opt/homebrew` | Install it first ([step 3](#3-install-homebrew)). |
+| `Homebrew isn't installed in /opt/homebrew` | Install it first ([step 1](#1-install-homebrew-once-you-have-sudo)). |
 | `/opt/homebrew isn't fully owned by …` | The folder, or some files in it, belong to another account or to root, for example if IT created it or after `sudo brew`. Run the `sudo chown -R` command it prints, with admin rights. |
 | `It seems there is already an App at '/Applications/…'` | Homebrew doesn't know it installed that app. Run `brew install --cask --adopt <name>`. |
 | `Permission denied` installing or upgrading an app | `/Applications` needs admin. Run it while you have admin rights. |
-| `chsh: ... non-standard shell` | The shell isn't in `/etc/shells`, and only an admin can add it ([step 6](#6-login-shell)). |
+| `chsh: ... non-standard shell` | The shell isn't in `/etc/shells`, and only an admin can add it ([step 4](#4-login-shell)). |
 | VS Code's terminal still runs `/bin/bash` after `chsh` | Apps keep the shell from when you logged in. Log out and back in, or set `terminal.integrated.defaultProfile.osx` to a profile with `"path": "/opt/homebrew/bin/bash"` and `"args": ["-l"]`. |
-| No tab completion | Your shell is macOS's bash 3.2. Check `echo $BASH_VERSION`, and see [step 6](#6-login-shell). |
+| No tab completion | Your shell is macOS's bash 3.2. Check `echo $BASH_VERSION`, and see [step 4](#4-login-shell). |
 | `docker-credential-desktop: executable file not found` | `~/.docker/bin` isn't on `PATH`. Keep the Docker Desktop lines at the top of the profile. |
 | `bash: .../gsed: No such file or directory` on every prompt | A GNU alias points at a tool that isn't installed. Use the conditional aliases in the repo's profile. |
 | `sed -i ''` fails with `can't read s/...` | `sed` is aliased to GNU `gsed`, which takes `-i` without the empty argument. Use `sed -i 's/.../.../' file`, or `/usr/bin/sed` for macOS syntax. |

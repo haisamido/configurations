@@ -14,7 +14,7 @@ fi
 
 # Use this brew even if another one is first on PATH
 if [[ ! -x "${HOMEBREW_PREFIX}/bin/brew" ]]; then
-  echo "Homebrew isn't installed in ${HOMEBREW_PREFIX}. Install it first (README, step 3)"
+  echo "Homebrew isn't installed in ${HOMEBREW_PREFIX}. Install it first (README, step 1)"
   exit 1
 fi
 

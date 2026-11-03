@@ -30,18 +30,12 @@ caffeinate -is -w $$ &
 mkdir -p "${HOME}/development/"
 mkdir -p "${HOME}/.ssh" && chmod 700 "${HOME}/.ssh"
 
-# Check the admin group first so non-admins never hit a sudo prompt (or a logged failure),
-# then confirm sudo actually works
-if ! dseditgroup -o checkmember -m "${USER}" admin > /dev/null 2>&1; then
-  HAS_ADMIN=false
-  echo "${USER} is not an administrator, skipping steps that need sudo"
-elif sudo -v; then
+# Checking the admin group doesn't invoke sudo, so it never prompts or logs a failed attempt
+if dseditgroup -o checkmember -m "${USER}" admin > /dev/null 2>&1; then
   HAS_ADMIN=true
-  # Keep sudo cached while the script runs, so the password is asked only once
-  while kill -0 $$ 2>/dev/null; do sudo -n true; sleep 60; done 2>/dev/null &
 else
-  echo "sudo failed (wrong password, cancelled, or admin expired). Re-run to try again"
-  exit 1
+  HAS_ADMIN=false
+  echo "${USER} is not an administrator, apps (casks) will be skipped"
 fi
 
 # Homebrew needs the Command Line Tools
@@ -164,6 +158,7 @@ work_formulae() {
     openjdk@21 \
     openmotif \
     openvpn \
+    pandoc \
     p11-kit \
     p7zip \
     parallel \
@@ -243,15 +238,34 @@ work_casks() {
     xquartz
 }
 
-# Casks go to /Applications, which only admins can write to
+# Casks go to /Applications, which only admins can write to, and .pkg casks call sudo.
+# Ask for the password (or PIN) only here, once per run, and keep it cached so brew's own
+# sudo calls don't stop and ask again
+can_install_casks() {
+  if [[ "${HAS_ADMIN}" != true ]]; then
+    echo "Skipping casks: installing into /Applications needs admin"
+    return 1
+  fi
+  # Already asked this run: don't ask again
+  case "${SUDO_READY}" in
+    true) return 0 ;;
+    false) echo "Skipping casks"; return 1 ;;
+  esac
+  echo "Installing apps (casks) next. Some use .pkg installers that need sudo, so enter your"
+  echo "password or smart-card PIN once. It stays cached until this script finishes."
+  if ! sudo -v; then
+    SUDO_READY=false
+    echo "sudo failed (wrong password, cancelled, or admin expired). Skipping casks"
+    return 1
+  fi
+  SUDO_READY=true
+  while kill -0 $$ 2>/dev/null; do sudo -n true; sleep 60; done > /dev/null 2>&1 &
+}
+
 work() {
   check_homebrew_owner
   work_formulae
-  if [[ "${HAS_ADMIN}" == true ]]; then
-    work_casks
-  else
-    echo "Skipping casks: installing into /Applications needs admin"
-  fi
+  can_install_casks && work_casks
 }
 
 home() {
@@ -259,6 +273,8 @@ home() {
 
   brew install fluid-synth \
     lilypond
+
+  can_install_casks || return 0
 
   brew install --cask \
     ableton-live-suite \
@@ -274,25 +290,35 @@ home() {
     reaper \
     steam
 
-  # These use .pkg installers, which need admin rights
-  if [[ "${HAS_ADMIN}" == true ]]; then
-    brew install --cask \
-      adobe-acrobat-reader \
-      google-drive \
-      surge-xt
-  fi
+  # These use .pkg installers
+  brew install --cask \
+    adobe-acrobat-reader \
+    google-drive \
+    surge-xt
 }
 
 echo "Select action:"
 echo "  1) update"
-echo "  2) work"
-echo "  3) home"
-read -r -p "Choice [1/2/3]: " choice
+echo "  2) work (formulae, then casks)"
+echo "  3) work formulae only"
+echo "  4) work casks only"
+echo "  5) home"
+read -r -p "Choice [1/2/3/4/5]: " choice
+
+case "${choice}" in
+  1) echo; echo "Selected 1) update" ;;
+  2) echo; echo "Selected 2) work (formulae, then casks)" ;;
+  3) echo; echo "Selected 3) work formulae only" ;;
+  4) echo; echo "Selected 4) work casks only" ;;
+  5) echo; echo "Selected 5) home" ;;
+esac
 
 case "${choice}" in
   1) update ;;
   2) work ;;
-  3)
+  3) check_homebrew_owner; work_formulae ;;
+  4) check_homebrew_owner; can_install_casks && work_casks ;;
+  5)
     read -r -p "Are you sure you want to install home packages? [y/N]: " confirm
     if [[ "${confirm}" =~ ^[Yy]$ ]]; then
       home

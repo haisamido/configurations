@@ -76,12 +76,12 @@ Once `/opt/homebrew` belongs to you, `brew` never needs admin again.
 ### 4. Install the packages
 
 ```bash
-./install.sh     # choose 2) work, or 3) home for work plus home apps
+./install.sh     # choose 2) work, or 5) home for work plus home apps
 ```
 
 Apps (casks) are only installed if you're an admin. Without admin, `work`
-installs the formulae and says it skipped the apps. Run it again once you have
-admin. See [install.sh](#installsh) for what it checks and what each choice
+installs the formulae and says it skipped the apps. Once you have admin, choose
+`4)` to install just the apps. See [install.sh](#installsh) for what it checks and what each choice
 does.
 
 ### 5. Shell profile
@@ -146,9 +146,9 @@ It runs these checks first, and stops with a message if one fails:
 1. **Apple Silicon.** Intel Macs aren't supported.
 2. **Homebrew.** It must be installed in `/opt/homebrew` (step 3). The script
    uses that brew even if another one comes first on your `PATH`.
-3. **Admin rights.** If your account is in the `admin` group, it asks for your
-   password once, confirms `sudo` works and keeps it cached while it runs. If
-   not, it carries on without the steps that need admin.
+3. **Admin rights.** It checks whether your account is in the `admin` group,
+   without calling `sudo`. If not, it carries on and skips the apps (casks)
+   later.
 4. **Command Line Tools.** If they're missing, it starts Apple's installer.
    Re-run the script when that finishes.
 
@@ -157,9 +157,16 @@ creates `~/development` and `~/.ssh`. Then it shows a menu:
 
 | Choice | Does |
 |---|---|
-| 1) `update` | Updates Homebrew and upgrades formulae. Casks aren't upgraded: most apps update themselves, or run `brew upgrade --cask <name>` |
+| 1) `update` | Updates Homebrew and upgrades formulae. Never asks for your password. Casks aren't upgraded: most apps update themselves, or run `brew upgrade --cask <name>` |
 | 2) `work` | Installs the work formulae (`work_formulae`), then the work apps (`work_casks`) if you're an admin. Without admin it skips the apps and says so |
-| 3) `home` | Everything in `work`, then the home formulae and apps (asks to confirm). The apps need admin. Without admin, the three `.pkg` ones are skipped, but the others are still attempted and fail with `Permission denied` |
+| 3) `work_formulae` | Only the work formulae. Never asks for your password |
+| 4) `work_casks` | Only the work apps, for example during an admin window. Asks for your password once |
+| 5) `home` | Everything in `work`, then the home formulae and apps (asks to confirm). The apps are skipped without admin, as in `work` |
+
+Formulae never need your password. If you're an admin, it asks for your
+password (or smart-card PIN) once, right before the first app, and keeps it
+cached so `.pkg` installers don't ask again. If that fails (wrong password,
+cancelled, or your admin rights expired), it skips the apps and carries on.
 
 Before `update`, `work` or `home` changes anything, it checks that every file
 in `/opt/homebrew` belongs to you, because `brew` won't run as root. If any

@@ -74,9 +74,11 @@ work without admin and degrade cleanly.
 - Every app cask goes to `/Applications`, which needs admin-group membership.
 - `.pkg` casks need admin and a password to install, upgrade and uninstall.
 - Command-line-only casks (for example `kiro-cli`) need no admin.
-- `install.sh` sets `HAS_ADMIN` from `dseditgroup` before any `sudo` call, so
-  non-admins never trigger a failed `sudo`. Keep that order: group check
-  first, `sudo -v` only for admins.
+- `install.sh` sets `HAS_ADMIN` from `dseditgroup` at the start, which never
+  calls `sudo`. The only `sudo -v` is in `can_install_casks`, right before the
+  first cask, and only for admins, so `update` and formulae never ask for the
+  PIN. Keep new sudo-needing steps behind `can_install_casks` (or a function
+  like it) rather than prompting at startup.
 
 To check the owner's current admin status without `sudo`:
 `dseditgroup -o checkmember -m "$USER" admin`.

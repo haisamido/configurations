@@ -14,7 +14,7 @@ work without admin and degrade cleanly.
 
 | File | Role |
 |---|---|
-| `install.sh` | Checks (Apple Silicon, Homebrew in `/opt/homebrew`, admin, Command Line Tools), then a menu: `update`, `work` (`work_formulae` then `work_casks` if admin), `home` |
+| `install.sh` | Checks (Apple Silicon, Homebrew in `/opt/homebrew`, admin, Command Line Tools), then a menu: `update` (`update_formulae` then `update_casks`), `update_formulae`, `update_casks`, `work` (`work_formulae` then `work_casks` if admin), `work_formulae`, `work_casks`, `home` |
 | `README.md` | New-Mac checklist plus reference sections. It must describe `install.sh` as it actually behaves |
 | `.bash_profile` | Public copy of the owner's `~/.bash_profile`, minus personal lines, which live in `~/.bash_profile.local` |
 | `brew_installs.txt` | Snapshot of installed formulae and casks |
@@ -76,7 +76,7 @@ work without admin and degrade cleanly.
 - Command-line-only casks (for example `kiro-cli`) need no admin.
 - `install.sh` sets `HAS_ADMIN` from `dseditgroup` at the start, which never
   calls `sudo`. The only `sudo -v` is in `can_install_casks`, right before the
-  first cask, and only for admins, so `update` and formulae never ask for the
+  first cask, and only for admins, so `update_formulae` and formulae never ask for the
   PIN. Keep new sudo-needing steps behind `can_install_casks` (or a function
   like it) rather than prompting at startup.
 

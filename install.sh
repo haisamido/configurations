@@ -58,7 +58,7 @@ check_homebrew_owner() {
   fi
 }
 
-update() {
+update_formulae() {
   check_homebrew_owner
   brew update
   brew upgrade --formula
@@ -262,6 +262,24 @@ can_install_casks() {
   while kill -0 $$ 2>/dev/null; do sudo -n true; sleep 60; done > /dev/null 2>&1 &
 }
 
+# Apps that update themselves (VS Code, browsers) are left to their own updaters
+update_casks() {
+  check_homebrew_owner
+  can_install_casks || return 0
+  brew update
+  brew upgrade --cask
+  brew cleanup
+}
+
+# Both together, with the ownership scan and brew update run once
+update() {
+  check_homebrew_owner
+  brew update
+  brew upgrade --formula
+  can_install_casks && brew upgrade --cask
+  brew cleanup
+}
+
 work() {
   check_homebrew_owner
   work_formulae
@@ -298,27 +316,30 @@ home() {
 }
 
 echo "Select action:"
-echo "  1) update"
-echo "  2) work (formulae, then casks)"
-echo "  3) work formulae only"
-echo "  4) work casks only"
-echo "  5) home"
-read -r -p "Choice [1/2/3/4/5]: " choice
+echo "  1) Install work (formulae, then casks)"
+echo "  2) Install work formulae only"
+echo "  3) Install work casks only"
+echo "  4) Install home (formulae, then casks)"
+echo "  5) update (formulae, then casks)"
+echo "  6) update formulae only"
+echo "  7) update casks only"
+read -r -p "Choice [1/2/3/4/5/6/7]: " choice
 
 case "${choice}" in
-  1) echo; echo "Selected 1) update" ;;
-  2) echo; echo "Selected 2) work (formulae, then casks)" ;;
-  3) echo; echo "Selected 3) work formulae only" ;;
-  4) echo; echo "Selected 4) work casks only" ;;
-  5) echo; echo "Selected 5) home" ;;
+  1) echo; echo "Selected 1) Install work (formulae, then casks)" ;;
+  2) echo; echo "Selected 2) Install work formulae only" ;;
+  3) echo; echo "Selected 3) Install work casks only" ;;
+  4) echo; echo "Selected 4) Install home (formulae, then casks)" ;;
+  5) echo; echo "Selected 5) update (formulae, then casks)" ;;
+  6) echo; echo "Selected 6) update formulae only" ;;
+  7) echo; echo "Selected 7) update casks only" ;;
 esac
 
 case "${choice}" in
-  1) update ;;
-  2) work ;;
-  3) check_homebrew_owner; work_formulae ;;
-  4) check_homebrew_owner; can_install_casks && work_casks ;;
-  5)
+  1) work ;;
+  2) check_homebrew_owner; work_formulae ;;
+  3) check_homebrew_owner; can_install_casks && work_casks ;;
+  4)
     read -r -p "Are you sure you want to install home packages? [y/N]: " confirm
     if [[ "${confirm}" =~ ^[Yy]$ ]]; then
       home
@@ -327,5 +348,8 @@ case "${choice}" in
       exit 0
     fi
     ;;
+  5) update ;;
+  6) update_formulae ;;
+  7) update_casks ;;
   *) echo "Invalid choice"; exit 1 ;;
 esac

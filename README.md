@@ -6,7 +6,7 @@ the time, some of the time, or not at all.
 
 | File | What it is |
 |---|---|
-| [install.sh](install.sh) | Checks the Mac, then installs the package lists (`update`, `work`, `home`) |
+| [install.sh](install.sh) | Checks the Mac, then installs or updates the package lists (`work`, `home`, `update`) |
 | [.bash_profile](.bash_profile) | Shell profile for this setup. Copy it to `~/.bash_profile` |
 | [brew_installs.txt](brew_installs.txt) | Snapshot of what's installed, to compare against `install.sh` |
 | [.claude/skills/mac-setup-maintainer](.claude/skills/mac-setup-maintainer/SKILL.md) | Claude Code skill for maintaining this repo, with scripts that check package names and the public profile |
@@ -76,12 +76,12 @@ Once `/opt/homebrew` belongs to you, `brew` never needs admin again.
 ### 4. Install the packages
 
 ```bash
-./install.sh     # choose 2) work, or 5) home for work plus home apps
+./install.sh     # choose 1) Install work, or 4) Install home for work plus home
 ```
 
 Apps (casks) are only installed if you're an admin. Without admin, `work`
 installs the formulae and says it skipped the apps. Once you have admin, choose
-`4)` to install just the apps. See [install.sh](#installsh) for what it checks and what each choice
+`3)` to install just the apps. See [install.sh](#installsh) for what it checks and what each choice
 does.
 
 ### 5. Shell profile
@@ -157,18 +157,20 @@ creates `~/development` and `~/.ssh`. Then it shows a menu:
 
 | Choice | Does |
 |---|---|
-| 1) `update` | Updates Homebrew and upgrades formulae. Never asks for your password. Casks aren't upgraded: most apps update themselves, or run `brew upgrade --cask <name>` |
-| 2) `work` | Installs the work formulae (`work_formulae`), then the work apps (`work_casks`) if you're an admin. Without admin it skips the apps and says so |
-| 3) `work_formulae` | Only the work formulae. Never asks for your password |
-| 4) `work_casks` | Only the work apps, for example during an admin window. Asks for your password once |
-| 5) `home` | Everything in `work`, then the home formulae and apps (asks to confirm). The apps are skipped without admin, as in `work` |
+| 1) `work` | Installs the work formulae (`work_formulae`), then the work apps (`work_casks`) if you're an admin. Without admin it skips the apps and says so |
+| 2) `work_formulae` | Only the work formulae. Never asks for your password |
+| 3) `work_casks` | Only the work apps, for example during an admin window. Asks for your password once |
+| 4) `home` | Everything in `work`, then the home formulae and apps (asks to confirm). The apps are skipped without admin, as in `work` |
+| 5) `update` | Upgrades formulae, then apps (casks) if you're an admin. Without admin it upgrades the formulae and skips the apps |
+| 6) `update_formulae` | Only the formulae. Never asks for your password |
+| 7) `update_casks` | Only the apps, if you're an admin. Asks for your password once. Apps that update themselves (VS Code, browsers) are left to their own updaters: `brew upgrade --cask --greedy` upgrades those too |
 
 Formulae never need your password. If you're an admin, it asks for your
 password (or smart-card PIN) once, right before the first app, and keeps it
 cached so `.pkg` installers don't ask again. If that fails (wrong password,
 cancelled, or your admin rights expired), it skips the apps and carries on.
 
-Before `update`, `work` or `home` changes anything, it checks that every file
+Before any choice changes anything, it checks that every file
 in `/opt/homebrew` belongs to you, because `brew` won't run as root. If any
 doesn't, it prints the `sudo chown -R` command to fix it. Scanning the whole
 folder takes a couple of seconds, which is why it waits until you've chosen.
@@ -188,7 +190,8 @@ So you need admin for:
 
 - Creating `/opt/homebrew` the first time.
 - Installing, upgrading and uninstalling any app (cask). Without admin, apps
-  stay on whatever version you have. Most update themselves anyway.
+  stay on whatever version you have. Most update themselves anyway. With admin,
+  `7) update casks only` upgrades the rest.
 - Adding a shell to `/etc/shells`, which `chsh` requires.
 - macOS updates (`sudo softwareupdate -i -a`).
 
@@ -216,7 +219,7 @@ because almost everything is a bottle.
    hash -r
    brew --prefix    # /opt/homebrew
    ```
-4. **Reinstall** from the same window with `./install.sh` (choose `2) work`).
+4. **Reinstall** from the same window with `./install.sh` (choose `1) Install work`).
    Apps that are already in `/Applications` fail with
    `It seems there is already an App at …`. Tell Homebrew to take them over:
    ```bash

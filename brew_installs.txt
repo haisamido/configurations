@@ -1,3 +1,11 @@
+# Generated from the repo root with:
+#   f=brew_installs.txt
+#   cat > "$f" <<'EOF'   # writes this header, up to the closing EOF
+#   echo "# formulae" >> "$f"
+#   brew leaves --installed-on-request | sort >> "$f"
+#   printf '\n# casks\n' >> "$f"
+#   brew list --cask | sort >> "$f"
+
 # formulae
 act
 actionlint

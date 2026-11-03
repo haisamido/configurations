@@ -288,11 +288,22 @@ Some formulae are installed under another name: `kubectl` is
 `kubernetes-cli`, and `python` and `postgresql` are versioned (for example
 `python@3.15`, `postgresql@18`).
 
-To save that list to [brew_installs.txt](brew_installs.txt):
+To save that list to [brew_installs.txt](brew_installs.txt), with these commands as a
+header at the top of the file:
 
 ```bash
 f=brew_installs.txt
-echo "# formulae" > "$f"
+cat > "$f" <<'EOF'
+# Generated from the repo root with:
+#   f=brew_installs.txt
+#   cat > "$f" <<'EOF'   # writes this header, up to the closing EOF
+#   echo "# formulae" >> "$f"
+#   brew leaves --installed-on-request | sort >> "$f"
+#   printf '\n# casks\n' >> "$f"
+#   brew list --cask | sort >> "$f"
+
+EOF
+echo "# formulae" >> "$f"
 brew leaves --installed-on-request | sort >> "$f"
 printf '\n# casks\n' >> "$f"
 brew list --cask | sort >> "$f"

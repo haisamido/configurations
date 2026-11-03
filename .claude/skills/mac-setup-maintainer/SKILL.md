@@ -114,12 +114,25 @@ When asked to recheck, validate or review:
 
 ## Regenerating brew_installs.txt
 
+Always keep the generating commands as the header at the top of the file, so
+anyone reading it knows how it was made and can redo it.
+
 Each line gets its own redirection, because wrapping the block in `{ ...; } >`
 lets VS Code's terminal write its shell-integration escape codes into the file:
 
 ```bash
 f=brew_installs.txt
-echo "# formulae" > "$f"
+cat > "$f" <<'EOF'
+# Generated from the repo root with:
+#   f=brew_installs.txt
+#   cat > "$f" <<'EOF'   # writes this header, up to the closing EOF
+#   echo "# formulae" >> "$f"
+#   brew leaves --installed-on-request | sort >> "$f"
+#   printf '\n# casks\n' >> "$f"
+#   brew list --cask | sort >> "$f"
+
+EOF
+echo "# formulae" >> "$f"
 brew leaves --installed-on-request | sort >> "$f"
 printf '\n# casks\n' >> "$f"
 brew list --cask | sort >> "$f"

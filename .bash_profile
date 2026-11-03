@@ -43,6 +43,9 @@ done
 # Tab completion (bash-completion@2; also loads make, task, kubectl, gh)
 [[ -r "${HOMEBREW}/etc/profile.d/bash_completion.sh" ]] && . "${HOMEBREW}/etc/profile.d/bash_completion.sh"
 
+# fzf: Ctrl-R fuzzy history search, Ctrl-T file picker, Alt-C cd
+[[ $- == *i* ]] && command -v fzf > /dev/null && eval "$(fzf --bash)"
+
 # Point docker, act, lazydocker and dive at Podman's Docker-compatible socket
 if command -v podman > /dev/null; then
   export KIND_EXPERIMENTAL_PROVIDER=podman

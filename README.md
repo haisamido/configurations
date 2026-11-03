@@ -213,6 +213,8 @@ What [.bash_profile](.bash_profile) does, in order:
 - **Tab completion** comes from `bash-completion@2`, which also loads `task`,
   `kubectl` and `gh` completions. It needs bash 4.2 or newer, so it only works
   once your login shell is Homebrew's bash ([step 4](#4-login-shell)).
+- **fzf key bindings** (interactive shells only): Ctrl-R searches history,
+  Ctrl-T picks a file, Alt-C changes directory. Skipped if `fzf` isn't installed.
 - **`DOCKER_HOST`** points `docker`, `act`, `lazydocker` and `dive` at Podman's
   socket. The socket lives in a temporary folder whose path can change, so it's
   looked up each time a shell starts, and it's set only when a Podman machine
@@ -250,6 +252,17 @@ brew list --cask
 Some formulae are installed under another name: `kubectl` is
 `kubernetes-cli`, and `python` and `postgresql` are versioned (for example
 `python@3.15`, `postgresql@18`).
+
+A few need a one-time setting before they do anything:
+
+- **`git-delta`** only formats `git diff` once git is told to use it:
+  ```bash
+  git config --global core.pager delta
+  git config --global interactive.diffFilter 'delta --color-only'
+  git config --global delta.navigate true
+  ```
+- **`gnu-tar`** installs as `gtar`. Plain `tar` stays macOS's version.
+- **`fzf`** key bindings are loaded by the [shell profile](#shell-profile).
 
 To save that list to [brew_installs.txt](brew_installs.txt), with these commands as a
 header at the top of the file:

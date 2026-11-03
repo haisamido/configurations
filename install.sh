@@ -68,6 +68,7 @@ update_formulae() {
 work_formulae() {
   brew install act \
     actionlint \
+    age \
     amazon-ecs-cli \
     ansible \
     autoconf \
@@ -108,13 +109,17 @@ work_formulae() {
     duckdb \
     emscripten \
     espeak-ng \
+    fd \
+    fzf \
     gawk \
     gcc \
     gh \
     git \
+    git-delta \
     gitlab-ci-local \
     gnu-getopt \
     gnu-sed \
+    gnu-tar \
     gnupg \
     gnuplot \
     go \
@@ -123,6 +128,8 @@ work_formulae() {
     gradle \
     graphviz \
     grep \
+    grype \
+    hadolint \
     helm \
     hiredis \
     htop \
@@ -138,6 +145,7 @@ work_formulae() {
     kionsoftware/tap/kion-cli \
     kind \
     kompose \
+    kubeconform \
     kubectl \
     kubectx \
     kustomize \
@@ -171,6 +179,7 @@ work_formulae() {
     podman-compose \
     poppler \
     postgresql \
+    pre-commit \
     pyqt \
     pyqt@5 \
     python \
@@ -180,6 +189,7 @@ work_formulae() {
     r \
     rclone \
     redis \
+    ripgrep \
     rpm2cpio \
     rsync \
     ruby \
@@ -187,11 +197,16 @@ work_formulae() {
     s3cmd \
     scrcpy \
     shellcheck \
+    shfmt \
     skopeo \
+    sops \
     speedtest-cli \
+    stern \
     swig \
+    syft \
     tcpdump \
     hashicorp/tap/terraform \
+    terraform-docs \
     terragrunt \
     tig \
     tmux \
@@ -204,6 +219,7 @@ work_formulae() {
     xcodes \
     xerces-c \
     xq \
+    yamllint \
     yq \
     zstd \
     zsync

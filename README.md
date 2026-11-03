@@ -10,7 +10,7 @@ where admin rights come and go.
 | [install.sh](install.sh) | Checks the Mac, then installs or updates the package lists (`work`, `home`, `update`) |
 | [.bash_profile](.bash_profile) | Shell profile for this setup. Copy it to `~/.bash_profile` |
 | [brew_installs.txt](brew_installs.txt) | Snapshot of what's installed, to compare against `install.sh` |
-| [.claude/skills/mac-setup-maintainer](.claude/skills/mac-setup-maintainer/SKILL.md) | Claude Code skill for maintaining this repo, with scripts that check package names and the public profile |
+| [.claude/skills/mac-setup-maintainer](.claude/skills/mac-setup-maintainer/SKILL.md) | Maintenance skill for this repo, with scripts that check package names and the public profile |
 | `Makefile`, `Taskfile.yaml`, `ansible/` | Older, mostly Linux tooling. Not used by this setup |
 
 ## New Mac, step by step
@@ -124,6 +124,7 @@ creates `~/development` and `~/.ssh`. Then it shows a menu:
 | 5) `update` | Upgrades formulae, then apps (casks) if you're an admin. Without admin it upgrades the formulae and skips the apps |
 | 6) `update_formulae` | Only the formulae. Never asks for your password |
 | 7) `update_casks` | Only the apps, if you're an admin. Asks for your password once. Apps that update themselves (VS Code, browsers) are left to their own updaters: `brew upgrade --cask --greedy` upgrades those too |
+| 8) `install_inuvika` | Installs the Inuvika OVD Enterprise Desktop Client, which isn't in Homebrew. Skips it if the latest version is already installed. Otherwise downloads Inuvika's `.pkg`, checks it's signed by Inuvika, and installs it with `sudo installer` (admin only, asks for your password once) |
 
 Formulae never need your password. If you're an admin, it asks for your
 password (or smart-card PIN) once, right before the first app, and keeps it
@@ -152,6 +153,8 @@ So you need admin for:
 - Installing, upgrading and uninstalling any app (cask). Without admin, apps
   stay on whatever version you have. Most update themselves anyway. With admin,
   `7) update casks only` upgrades the rest.
+- The Inuvika OVD client (`8)`). Its installer adds root helpers for USB, webcam,
+  sound, scanner and folder redirection in remote sessions.
 - Adding a shell to `/etc/shells`, which `chsh` requires.
 - macOS updates (`sudo softwareupdate -i -a`).
 

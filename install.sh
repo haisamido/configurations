@@ -262,19 +262,19 @@ work_casks() {
 # sudo calls don't stop and ask again
 can_install_casks() {
   if [[ "${HAS_ADMIN}" != true ]]; then
-    echo "Skipping casks: installing into /Applications needs admin"
+    echo "Skipping apps: installing into /Applications needs admin"
     return 1
   fi
   # Already asked this run: don't ask again
   case "${SUDO_READY}" in
     true) return 0 ;;
-    false) echo "Skipping casks"; return 1 ;;
+    false) echo "Skipping apps"; return 1 ;;
   esac
-  echo "Installing apps (casks) next. Some use .pkg installers that need sudo, so enter your"
+  echo "Installing apps next. Some use .pkg installers that need sudo, so enter your"
   echo "password or smart-card PIN once. It stays cached until this script finishes."
   if ! sudo -v; then
     SUDO_READY=false
-    echo "sudo failed (wrong password, cancelled, or admin expired). Skipping casks"
+    echo "sudo failed (wrong password, cancelled, or admin expired). Skipping apps"
     return 1
   fi
   SUDO_READY=true
@@ -297,6 +297,45 @@ update() {
   brew upgrade --formula
   can_install_casks && brew upgrade --cask
   brew cleanup
+}
+
+# Inuvika OVD Enterprise Desktop Client isn't in Homebrew. Its .pkg also installs root
+# helpers for USB, webcam, sound, scanner and folder redirection, so it needs sudo
+INUVIKA_URL='https://files.inuvika.com/t/ovd/edc-macos-universal:latest'
+INUVIKA_SIGNER='Developer ID Installer: Inuvika Inc. (39W2356835)'
+INUVIKA_APP='/Applications/Inuvika OVD Enterprise Desktop Client.app'
+install_inuvika() {
+  # The download's file name carries the version (Inuvika-OVD-26.10.0.845-...pkg), so compare
+  # it with the installed app before downloading anything or asking for the password
+  local latest installed=""
+  latest="$(curl -fsSIL "${INUVIKA_URL}" | tr -d '\r' | sed -n 's/.*filename="Inuvika-OVD-\([0-9.]*\)-.*/\1/p' | tail -1)"
+  if [[ -f "${INUVIKA_APP}/Contents/Info.plist" ]]; then
+    installed="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "${INUVIKA_APP}/Contents/Info.plist")"
+  fi
+  if [[ -n "${latest}" && "${latest}" == "${installed}" ]]; then
+    echo "Inuvika OVD client ${installed} is already the latest version"
+    return 0
+  fi
+  echo "Inuvika OVD client: installed ${installed:-none}, latest ${latest:-unknown}"
+
+  can_install_casks || return 0
+  local tmp pkg
+  tmp="$(mktemp -d)"
+  pkg="${tmp}/inuvika.pkg"
+  echo "Downloading the Inuvika OVD Enterprise Desktop Client"
+  if ! curl -fsSL -o "${pkg}" "${INUVIKA_URL}"; then
+    echo "Download failed"
+    rm -rf "${tmp}"
+    return 1
+  fi
+  # Only install it if Inuvika signed it
+  if ! pkgutil --check-signature "${pkg}" | grep -qF "${INUVIKA_SIGNER}"; then
+    echo "${pkg} isn't signed by ${INUVIKA_SIGNER}, not installing it"
+    rm -rf "${tmp}"
+    return 1
+  fi
+  sudo installer -pkg "${pkg}" -target /
+  rm -rf "${tmp}"
 }
 
 work() {
@@ -342,7 +381,8 @@ echo "  4) Install home (formulae, then casks)"
 echo "  5) update (formulae, then casks)"
 echo "  6) update formulae only"
 echo "  7) update casks only"
-read -r -p "Choice [1/2/3/4/5/6/7]: " choice
+echo "  8) Install Inuvika OVD client (not in Homebrew)"
+read -r -p "Choice [1/2/3/4/5/6/7/8]: " choice
 
 case "${choice}" in
   1) echo; echo "Selected 1) Install work (formulae, then casks)" ;;
@@ -352,6 +392,7 @@ case "${choice}" in
   5) echo; echo "Selected 5) update (formulae, then casks)" ;;
   6) echo; echo "Selected 6) update formulae only" ;;
   7) echo; echo "Selected 7) update casks only" ;;
+  8) echo; echo "Selected 8) Install Inuvika OVD client (not in Homebrew)" ;;
 esac
 
 case "${choice}" in
@@ -370,5 +411,6 @@ case "${choice}" in
   5) update ;;
   6) update_formulae ;;
   7) update_casks ;;
+  8) install_inuvika ;;
   *) echo "Invalid choice"; exit 1 ;;
 esac

@@ -46,6 +46,9 @@ done
 # fzf: Ctrl-R fuzzy history search, Ctrl-T file picker, Alt-C cd
 [[ $- == *i* ]] && command -v fzf > /dev/null && eval "$(fzf --bash)"
 
+# granted: assume has to be sourced to set AWS credentials in this shell
+command -v assume > /dev/null && alias assume='. assume'
+
 # Point docker, act, lazydocker and dive at Podman's Docker-compatible socket
 if command -v podman > /dev/null; then
   export KIND_EXPERIMENTAL_PROVIDER=podman

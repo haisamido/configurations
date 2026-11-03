@@ -263,6 +263,10 @@ A few need a one-time setting before they do anything:
   ```
 - **`gnu-tar`** installs as `gtar`. Plain `tar` stays macOS's version.
 - **`fzf`** key bindings are loaded by the [shell profile](#shell-profile).
+- **`granted`**'s `assume` command has to be sourced to set AWS credentials in
+  your current shell. The shell profile aliases `assume` to `. assume`.
+- **`aws-vault`** and **`granted`** both manage AWS credentials. Use whichever
+  suits a project; they don't interfere with each other.
 
 To save that list to [brew_installs.txt](brew_installs.txt), with these commands as a
 header at the top of the file:

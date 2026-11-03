@@ -85,6 +85,7 @@ work_formulae() {
     aws-checksums \
     aws-sam-cli \
     aws-shell \
+    aws-vault \
     awscli \
     awslogs \
     bash \
@@ -126,11 +127,13 @@ work_formulae() {
     go-md2man \
     go-task \
     gradle \
+    granted \
     graphviz \
     grep \
     grype \
     hadolint \
     helm \
+    helmfile \
     hiredis \
     htop \
     iftop \

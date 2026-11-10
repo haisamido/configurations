@@ -90,6 +90,7 @@ work_formulae() {
     awslogs \
     bash \
     bash-completion@2 \
+    bat \
     cask \
     cmake \
     colordiff \
@@ -110,7 +111,9 @@ work_formulae() {
     duckdb \
     emscripten \
     espeak-ng \
+    eza \
     fd \
+    ffmpeg \
     fzf \
     gawk \
     gcc \
@@ -162,6 +165,7 @@ work_formulae() {
     midnight-commander \
     minikube \
     nano \
+    ncdu \
     netcat \
     nmap \
     nvm \
@@ -230,6 +234,7 @@ work_formulae() {
 
 work_casks() {
   brew install --cask \
+    appcleaner \
     brave-browser \
     dbeaver-community \
     docker-desktop \

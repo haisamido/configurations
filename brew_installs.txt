@@ -22,6 +22,7 @@ bash-completion@2
 bat
 cask
 cmake
+colima
 colordiff
 cosign
 couchdb

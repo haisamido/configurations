@@ -93,6 +93,7 @@ work_formulae() {
     bat \
     cask \
     cmake \
+    colima \
     colordiff \
     coreutils \
     cosign \

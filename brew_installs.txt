@@ -149,10 +149,15 @@ zsync
 
 # casks
 appcleaner
+blender
+box-drive
+box-tools
 brave-browser
 dbeaver-community
 docker-desktop
 eclipse-ide
+freecad
+gimp
 github
 headlamp
 inkscape

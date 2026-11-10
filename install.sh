@@ -235,10 +235,15 @@ work_formulae() {
 work_casks() {
   brew install --cask \
     appcleaner \
+    blender \
+    box-drive \
+    box-tools \
     brave-browser \
     dbeaver-community \
     docker-desktop \
     eclipse-ide \
+    freecad \
+    gimp \
     github \
     headlamp \
     inkscape \
@@ -362,9 +367,7 @@ home() {
     android-platform-tools \
     arduino-ide \
     audacity \
-    blender \
     firefox \
-    freecad \
     google-chrome \
     lmms \
     openscad \

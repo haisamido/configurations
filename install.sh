@@ -240,6 +240,7 @@ work_casks() {
     box-drive \
     box-tools \
     brave-browser \
+    claude-code \
     dbeaver-community \
     docker-desktop \
     eclipse-ide \

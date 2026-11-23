@@ -40,7 +40,6 @@ dos2unix
 duckdb
 emscripten
 espeak-ng
-exif
 exiftool
 eza
 fd

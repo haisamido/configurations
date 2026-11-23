@@ -112,6 +112,7 @@ work_formulae() {
     duckdb \
     emscripten \
     espeak-ng \
+    exiftool \
     eza \
     fd \
     ffmpeg \

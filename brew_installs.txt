@@ -41,6 +41,7 @@ duckdb
 emscripten
 espeak-ng
 exif
+exiftool
 eza
 fd
 fzf
